@@ -12,17 +12,6 @@ spring:
       min-size: 5
       validation-query: SELECT 1
 
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS} #pkc-619z3.us-east1.gcp.confluent.cloud:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        security.protocol: SASL_SSL
-        sasl.mechanism: PLAIN
-        #sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
-        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="QPOHIHRZOG4ZZJZ5" password="obWMF0fhB+HKXKUvFz3YvBw2p5qZuubgJN5wZSuz750hjaSD9SLW6fFOcZq4u/lp";
-  
   security:
     oauth2:
       resourceserver:

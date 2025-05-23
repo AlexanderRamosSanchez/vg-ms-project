@@ -28,10 +28,7 @@ public class HousingServiceClient {
                 .uri("/api/v1/services/{id}", serviceId)
                 .retrieve()
                 .bodyToMono(BasicServiceDTO.class)
-                .onErrorResume(e -> {
-                    // Log error and return empty
-                    return Mono.empty();
-                });
+                .onErrorResume(e -> Mono.empty()); // Log error y retorna vacío
     }
 
     public Mono<HousingDetailsDTO> getHousingDetailsById(Integer housingId) {
@@ -43,10 +40,7 @@ public class HousingServiceClient {
                 .uri("/api/v1/housing/{id}", housingId)
                 .retrieve()
                 .bodyToMono(HousingDetailsDTO.class)
-                .onErrorResume(e -> {
-                    // Log error and return empty
-                    return Mono.empty();
-                });
+                .onErrorResume(e -> Mono.empty()); // Log error y retorna vacío
     }
 
     public Mono<BasicServiceDTO> createBasicService(BasicServiceDTO basicServiceDTO) {

@@ -30,6 +30,12 @@ spring:
   family:
     service-url: ${FAMILY_SERVICE_URL} # https://humble-fortnight-5gx4qp46qj672vg5r-8081.app.github.dev
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://securetoken.google.com/security-prs1
+
 logging:
   level:
     io.r2dbc: DEBUG

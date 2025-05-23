@@ -4,9 +4,9 @@ spring:
 
   r2dbc:
     # Conexión a bd Person
-    url: ${R2DBC_URL} # r2dbc:postgresql://ep-morning-cake-a46o3cf8-pooler.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
-    username: ${R2DBC_USERNAME} # neondb_owner
-    password: ${R2DBC_PASSWORD} # npg_tGu4yQWLh9jb
+    url: ${R2DBC_URL_PERSON} # r2dbc:postgresql://ep-morning-cake-a46o3cf8-pooler.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
+    username: ${R2DBC_USERNAME_PERSON} # neondb_owner
+    password: ${R2DBC_PASSWORD_PERSON} # npg_tGu4yQWLh9jb
 
     pool:
       max-size: 20

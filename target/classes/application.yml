@@ -56,4 +56,4 @@ management:
 # Housing service configuration
 housing:
   service:
-    url: ${HOUSING_SERVICE_URL:https://laughing-space-spork-v6p76wg5j99hpp67-8081.app.github.dev}
+    url: ${HOUSING_SERVICE_URL}

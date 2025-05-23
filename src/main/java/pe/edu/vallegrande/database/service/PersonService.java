@@ -108,7 +108,7 @@ public class PersonService {
     private Mono<Person> validateFamilyAndSavePerson(Person person, Integer familyId) {
         return familyServiceClient.familyExists(familyId)
                 .flatMap(exists -> {
-                    if (exists) {
+                    if (Boolean.TRUE.equals(exists)) {
                         return savePersonWithActiveState(person);
                     } else {
                         return Mono.error(new RuntimeException("La familia con ID " + familyId + " no existe"));

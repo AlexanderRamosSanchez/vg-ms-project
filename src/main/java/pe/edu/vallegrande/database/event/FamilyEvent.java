@@ -12,4 +12,6 @@ public class FamilyEvent {
     private String eventType; // "CREATED", "UPDATED", "DELETED"
     private String lastName;
     private String status;
+    private Integer serviceId;
+    private Integer housingId;
 }

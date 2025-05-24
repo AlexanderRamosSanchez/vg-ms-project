@@ -29,7 +29,7 @@ public class TestSecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
-                        .anyExchange().permitAll() // Permitir todo en tests
+                        .anyExchange().permitAll() // Configuración para entorno de testing
                 )
                 .build();
     }

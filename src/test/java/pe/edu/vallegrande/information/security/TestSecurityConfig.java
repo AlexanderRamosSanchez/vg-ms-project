@@ -7,10 +7,22 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
+/**
+ * Configuración de seguridad para pruebas.
+ * 
+ * Esta clase permite el acceso a todas las rutas durante las pruebas.
+ * No debe ser utilizada en producción.
+ */
 @TestConfiguration
 @EnableWebFluxSecurity
 public class TestSecurityConfig {
 
+    /**
+     * Configura la cadena de filtros de seguridad para las pruebas.
+     * 
+     * @param http la configuración de seguridad del servidor HTTP
+     * @return la cadena de filtros de seguridad configurada
+     */
     @Bean
     @Primary
     public SecurityWebFilterChain testSecurityWebFilterChain(ServerHttpSecurity http) {

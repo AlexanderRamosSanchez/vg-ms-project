@@ -1,10 +1,11 @@
-package pe.edu.vallegrande.database.service;
+package pe.edu.vallegrande.database.kafka;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import pe.edu.vallegrande.database.event.FamilyEvent;
+
 import pe.edu.vallegrande.database.model.Family;
+import pe.edu.vallegrande.database.model.event.FamilyEvent;
 
 @Service
 public class FamilyEventService {

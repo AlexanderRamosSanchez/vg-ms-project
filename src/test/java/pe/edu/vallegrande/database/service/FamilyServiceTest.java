@@ -11,6 +11,7 @@ import pe.edu.vallegrande.database.client.HousingServiceClient;
 import pe.edu.vallegrande.database.dto.BasicServiceDTO;
 import pe.edu.vallegrande.database.dto.FamilyDTO;
 import pe.edu.vallegrande.database.dto.HousingDetailsDTO;
+import pe.edu.vallegrande.database.kafka.FamilyEventService;
 import pe.edu.vallegrande.database.model.Family;
 import pe.edu.vallegrande.database.repository.FamilyRepository;
 import reactor.core.publisher.Flux;

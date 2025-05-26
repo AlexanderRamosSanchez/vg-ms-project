@@ -1,4 +1,4 @@
-package pe.edu.vallegrande.database.event;
+package pe.edu.vallegrande.database.model.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,9 +1,10 @@
-package pe.edu.vallegrande.database.consumer;
+package pe.edu.vallegrande.database.kafka.consumer;
 
 import org.springframework.stereotype.Component;
 import org.springframework.kafka.annotation.KafkaListener;
-import pe.edu.vallegrande.database.config.KafkaConsumerConfig;
-import pe.edu.vallegrande.database.event.FamilyEvent;
+
+import pe.edu.vallegrande.database.kafka.KafkaConsumerConfig;
+import pe.edu.vallegrande.database.model.event.FamilyEvent;
 import pe.edu.vallegrande.database.service.PersonService;
 
 @Component

@@ -7,12 +7,13 @@ pipeline {
         KAFKA_BOOTSTRAP_SERVERS = credentials('KAFKA_BOOTSTRAP_SERVERS')
         KAFKA_USERNAME = credentials('KAFKA_USERNAME')
         KAFKA_PASSWORD = credentials('KAFKA_PASSWORD')
+        HOUSING_SERVICE_URL = credentials('HOUSING_SERVICE_URL')
     }
     stages {
         stage('Clonar Repositorio') {
             steps {
                 git branch: 'develop-spring',
-                url: 'https://github.com/AlexanderRamosSanchez/vg-ms-database.git'
+                url: 'https://github.com/AlexanderRamosSanchez/vg-ms-project.git'
             }
         }
         stage('Compilar con Maven') {

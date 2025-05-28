@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clonar Repositorio') {
             steps {
-                git branch: 'develop-spring',
+                git branch: 'vg-ms-family',
                 url: 'https://github.com/AlexanderRamosSanchez/vg-ms-project.git'
             }
         }

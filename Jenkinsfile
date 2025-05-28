@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        R2DBC_URL = credentials('R2DBC_URL')
-        R2DBC_USERNAME = credentials('R2DBC_USERNAME')
-        R2DBC_PASSWORD = credentials('R2DBC_PASSWORD')
+        R2DBC_URL_INFORMATION = credentials('R2DBC_URL_INFORMATION')
+        R2DBC_USERNAME_INFORMATION = credentials('R2DBC_USERNAME_INFORMATION')
+        R2DBC_PASSWORD_INFORMATION = credentials('R2DBC_PASSWORD_INFORMATION')
     }
     stages {
         stage('Clonar Repositorio') {

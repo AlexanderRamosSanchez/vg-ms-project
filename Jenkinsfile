@@ -18,17 +18,17 @@ pipeline {
         }
         stage('Compilar con Maven') {
             steps {
-                bat 'mvn clean install'
+                sh 'mvn clean install'
             }
         }
         stage('Ejecutar Pruebas Unitarias') {
             steps {
-                bat 'mvn test'
+                sh 'mvn test'
             }
         }
         stage('Generar Artefacto .jar') {
             steps {
-                bat 'mvn package'
+                sh 'mvn package'
             }
         }
         stage('Análisis con SonarCloud') {
@@ -39,7 +39,7 @@ pipeline {
                             string(credentialsId: 'SONAR_PROJECT_KEY', variable: 'SONAR_PROJECT_KEY'),
                             string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')
                         ]) {
-                            bat "mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.login=${SONAR_TOKEN} -X"
+                            sh "mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.login=${SONAR_TOKEN} -X"
                         }
                     }
                 }

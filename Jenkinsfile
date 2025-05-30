@@ -22,6 +22,11 @@ pipeline {
                 sh 'mvn test'
             }
         }
+        stage('Publicar Resultados de Pruebas') {
+            steps {
+                junit 'target/surefire-reports/*.xml'
+            }
+        }
         stage('Generar Artefacto .jar') {
             steps {
                 sh 'mvn package'

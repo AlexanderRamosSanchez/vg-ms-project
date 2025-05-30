@@ -30,6 +30,9 @@ spring:
   family:
     service-url: ${FAMILY_SERVICE_URL} # https://humble-fortnight-5gx4qp46qj672vg5r-8081.app.github.dev
 
+  api:
+    token: ${API_TOKEN} # API de token de firebase
+
   security:
     oauth2:
       resourceserver:

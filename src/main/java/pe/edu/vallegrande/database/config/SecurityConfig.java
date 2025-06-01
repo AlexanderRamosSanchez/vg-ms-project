@@ -19,13 +19,6 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
                         .pathMatchers("/swagger-ui.html").permitAll()
-                        .pathMatchers("/api/v1/families/{id}").permitAll()
-                        .pathMatchers("/api/v1/families/active").authenticated()
-                        .pathMatchers("/api/v1/families/inactive").authenticated()
-                        .pathMatchers("/api/v1/families/detail/{id}").authenticated()
-                        .pathMatchers("/api/v1/families").authenticated()
-                        .pathMatchers("/api/v1/families/delete/{id}").authenticated()
-                        .pathMatchers("/api/v1/families/active/{id}").authenticated()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

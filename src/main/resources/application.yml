@@ -4,9 +4,9 @@ spring:
 
   r2dbc:
     # Conexión a la base de datos Informacion Family
-    url: ${R2DBC_URL_INFORMATION} #r2dbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres
-    username: ${R2DBC_USERNAME_INFORMATION} #postgres.hjazvqbxrkrjvcmznljy
-    password: ${R2DBC_PASSWORD_INFORMATION} #npg_jnBdH2M7gwJz
+    url: ${R2DBC_URL_INFORMATION} #r2dbc:postgresql://ep-dawn-boat-a5k90edo-pooler.us-east-2.aws.neon.tech/information?sslmode=require
+    username: ${R2DBC_USERNAME_INFORMATION} #information_owner
+    password: ${R2DBC_PASSWORD_INFORMATION} #npg_ofFMZsCvqm57
     pool:
       max-size: 20
       min-size: 5

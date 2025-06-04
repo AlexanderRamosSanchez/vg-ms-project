@@ -7,13 +7,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pe.edu.vallegrande.database.client.HousingServiceClient;
+
 import pe.edu.vallegrande.database.dto.BasicServiceDTO;
 import pe.edu.vallegrande.database.dto.FamilyDTO;
 import pe.edu.vallegrande.database.dto.HousingDetailsDTO;
 import pe.edu.vallegrande.database.kafka.FamilyEventService;
 import pe.edu.vallegrande.database.model.Family;
 import pe.edu.vallegrande.database.repository.FamilyRepository;
+import pe.edu.vallegrande.database.webclient.HousingServiceClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

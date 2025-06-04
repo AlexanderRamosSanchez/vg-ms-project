@@ -5,13 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import pe.edu.vallegrande.database.client.HousingServiceClient;
 import pe.edu.vallegrande.database.dto.BasicServiceDTO;
 import pe.edu.vallegrande.database.dto.FamilyDTO;
 import pe.edu.vallegrande.database.dto.HousingDetailsDTO;
 import pe.edu.vallegrande.database.kafka.FamilyEventService;
 import pe.edu.vallegrande.database.model.Family;
 import pe.edu.vallegrande.database.repository.FamilyRepository;
+import pe.edu.vallegrande.database.webclient.HousingServiceClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

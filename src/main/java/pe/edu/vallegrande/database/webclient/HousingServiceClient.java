@@ -1,6 +1,6 @@
-package pe.edu.vallegrande.database.client;
+package pe.edu.vallegrande.database.webclient;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -9,26 +9,21 @@ import pe.edu.vallegrande.database.dto.HousingDetailsDTO;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public class HousingServiceClient {
 
-    private final WebClient webClient;
-
-    public HousingServiceClient(@Value("${housing.service.url}") String housingServiceUrl) {
-        this.webClient = WebClient.builder()
-                .baseUrl(housingServiceUrl)
-                .build();
-    }
+    private final WebClient housingServiceWebClient; // Inyectado desde WebClientConfig
 
     public Mono<BasicServiceDTO> getBasicServiceById(Integer serviceId) {
         if (serviceId == null) {
             return Mono.empty();
         }
         
-        return webClient.get()
+        return housingServiceWebClient.get()
                 .uri("/api/v1/services/{id}", serviceId)
                 .retrieve()
                 .bodyToMono(BasicServiceDTO.class)
-                .onErrorResume(e -> Mono.empty()); // Log error y retorna vacío
+                .onErrorResume(e -> Mono.empty());
     }
 
     public Mono<HousingDetailsDTO> getHousingDetailsById(Integer housingId) {
@@ -36,15 +31,15 @@ public class HousingServiceClient {
             return Mono.empty();
         }
         
-        return webClient.get()
+        return housingServiceWebClient.get()
                 .uri("/api/v1/housing/{id}", housingId)
                 .retrieve()
                 .bodyToMono(HousingDetailsDTO.class)
-                .onErrorResume(e -> Mono.empty()); // Log error y retorna vacío
+                .onErrorResume(e -> Mono.empty());
     }
 
     public Mono<BasicServiceDTO> createBasicService(BasicServiceDTO basicServiceDTO) {
-        return webClient.post()
+        return housingServiceWebClient.post()
                 .uri("/api/v1/services")
                 .bodyValue(basicServiceDTO)
                 .retrieve()
@@ -52,7 +47,7 @@ public class HousingServiceClient {
     }
 
     public Mono<HousingDetailsDTO> createHousingDetails(HousingDetailsDTO housingDetailsDTO) {
-        return webClient.post()
+        return housingServiceWebClient.post()
                 .uri("/api/v1/housing")
                 .bodyValue(housingDetailsDTO)
                 .retrieve()
@@ -60,7 +55,7 @@ public class HousingServiceClient {
     }
 
     public Mono<BasicServiceDTO> updateBasicService(Integer serviceId, BasicServiceDTO basicServiceDTO) {
-        return webClient.put()
+        return housingServiceWebClient.put()
                 .uri("/api/v1/services/{id}", serviceId)
                 .bodyValue(basicServiceDTO)
                 .retrieve()
@@ -68,7 +63,7 @@ public class HousingServiceClient {
     }
 
     public Mono<HousingDetailsDTO> updateHousingDetails(Integer housingId, HousingDetailsDTO housingDetailsDTO) {
-        return webClient.put()
+        return housingServiceWebClient.put()
                 .uri("/api/v1/housing/{id}", housingId)
                 .bodyValue(housingDetailsDTO)
                 .retrieve()

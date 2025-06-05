@@ -8,9 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pe.edu.vallegrande.database.client.FamilyServiceClient;
+
 import pe.edu.vallegrande.database.model.Person;
 import pe.edu.vallegrande.database.repository.PersonRepository;
+import pe.edu.vallegrande.database.webclient.FamilyServiceClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

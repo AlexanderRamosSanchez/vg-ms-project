@@ -1,9 +1,10 @@
 package pe.edu.vallegrande.database.service;
 
 import org.springframework.stereotype.Service;
-import pe.edu.vallegrande.database.client.FamilyServiceClient;
+
 import pe.edu.vallegrande.database.model.Person;
 import pe.edu.vallegrande.database.repository.PersonRepository;
+import pe.edu.vallegrande.database.webclient.FamilyServiceClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

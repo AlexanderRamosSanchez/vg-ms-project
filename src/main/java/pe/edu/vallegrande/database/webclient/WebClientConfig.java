@@ -22,13 +22,6 @@ public class WebClientConfig {
                 .build();
     }
 
-    // Bean genérico para otros servicios si necesitas
-    @Bean
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder()
-                .filter(authHeaderFilter());
-    }
-
     private ExchangeFilterFunction authHeaderFilter() {
         return (request, next) -> Mono.deferContextual(ctx -> {
             if (ctx.hasKey("Authorization")) {

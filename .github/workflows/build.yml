@@ -19,7 +19,6 @@ jobs:
       KAFKA_USERNAME: ${{ secrets.KAFKA_USERNAME }}
       KAFKA_PASSWORD: ${{ secrets.KAFKA_PASSWORD }}
       FAMILY_SERVICE_URL: ${{ secrets.FAMILY_SERVICE_URL }}
-      API_TOKEN: ${{ secrets.API_TOKEN }}
       
     steps:
       - uses: actions/checkout@v4

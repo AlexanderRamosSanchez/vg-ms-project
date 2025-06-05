@@ -8,7 +8,6 @@ pipeline {
         KAFKA_USERNAME = credentials('KAFKA_USERNAME')
         KAFKA_PASSWORD = credentials('KAFKA_PASSWORD')
         FAMILY_SERVICE_URL = credentials('FAMILY_SERVICE_URL')
-        API_TOKEN = credentials('API_TOKEN')
     }
     stages {
         stage('Clonar Repositorio') {

@@ -4,30 +4,32 @@ spring:
 
   r2dbc:
     # Conexión a la base de datos Family
-    url: ${R2DBC_URL} #r2dbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres
-    username: ${R2DBC_USERNAME} #postgres.hjazvqbxrkrjvcmznljy
-    password: ${R2DBC_PASSWORD} #npg_jnBdH2M7gwJz
+    url: r2dbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres
+    username: postgres.hjazvqbxrkrjvcmznljy
+    password: npg_jnBdH2M7gwJz
     pool:
       max-size: 20
       min-size: 5
       validation-query: SELECT 1
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS} #pkc-619z3.us-east1.gcp.confluent.cloud:9092
+    bootstrap-servers: pkc-619z3.us-east1.gcp.confluent.cloud:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         security.protocol: SASL_SSL
         sasl.mechanism: PLAIN
-        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
-        #sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="QPOHIHRZOG4ZZJZ5" password="obWMF0fhB+HKXKUvFz3YvBw2p5qZuubgJN5wZSuz750hjaSD9SLW6fFOcZq4u/lp";
+        #sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="QPOHIHRZOG4ZZJZ5" password="obWMF0fhB+HKXKUvFz3YvBw2p5qZuubgJN5wZSuz750hjaSD9SLW6fFOcZq4u/lp";
   
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://securetoken.google.com/security-prs1
+          # 🔥 OBLIGATORIO: URI de las claves públicas para verificar JWT
+          jwk-set-uri: https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com
 
   sql:
     init:
@@ -56,4 +58,4 @@ management:
 # Housing service configuration
 housing:
   service:
-    url: ${HOUSING_SERVICE_URL}
+    url: https://securetoken.google.com/security-prs1

@@ -26,7 +26,6 @@ public class Family {
     private String treatment;
     private String diseaseHistory;
     private String medicalExam;
-    private String tenure;
     private Integer serviceId;
     private Integer housingId;
     private String status;

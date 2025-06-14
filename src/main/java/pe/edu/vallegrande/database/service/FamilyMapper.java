@@ -31,7 +31,6 @@ public class FamilyMapper {
         dto.setTreatment(family.getTreatment());
         dto.setDiseaseHistory(family.getDiseaseHistory());
         dto.setMedicalExam(family.getMedicalExam());
-        dto.setTenure(family.getTenure());
         dto.setStatus(family.getStatus());
         dto.setCreated(family.getCreated());
         dto.setDeleted(family.getDeleted());
@@ -73,7 +72,6 @@ public class FamilyMapper {
         family.setTreatment(dto.getTreatment());
         family.setDiseaseHistory(dto.getDiseaseHistory());
         family.setMedicalExam(dto.getMedicalExam());
-        family.setTenure(dto.getTenure());
         family.setStatus(dto.getStatus());
         // We don't update created and deleted timestamps here
     }

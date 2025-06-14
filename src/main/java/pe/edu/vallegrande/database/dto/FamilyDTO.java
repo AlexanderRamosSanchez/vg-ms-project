@@ -21,7 +21,6 @@ public class FamilyDTO {
     private String treatment;
     private String diseaseHistory;
     private String medicalExam;
-    private String tenure;
     private String status;
     private LocalDateTime created;
     private LocalDateTime deleted;

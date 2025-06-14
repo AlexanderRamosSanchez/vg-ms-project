@@ -12,6 +12,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.math.BigDecimal;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -36,28 +38,36 @@ class HousingDetailsServiceTest {
     void setUp() {
         housingDetails = HousingDetails.builder()
                 .id(1)
+                .tenure("Propio")
                 .typeOfHousing("Apartment")
                 .housingMaterial("Concrete")
                 .housingSecurity("High")
                 .homeEnvironment(85)
                 .bedroomNumber(3)
                 .habitability("Good")
-                .numberRooms(5)
-                .numberOfBedrooms(3)
-                .habitabilityBuilding("Excellent")
+                .caregiverCondition("Available")
+                .caringCondition("Good")
+                .membersWork(2)
+                .workingTime("Full-time")
+                .monthlyIncome(BigDecimal.valueOf(1500.00))
+                .monthlyExpense(BigDecimal.valueOf(800.00))
                 .build();
 
         updatedHousingDetails = HousingDetails.builder()
                 .id(1)
+                .tenure("Propio")
                 .typeOfHousing("Updated House")
                 .housingMaterial("Updated Material")
                 .housingSecurity("Updated Security")
                 .homeEnvironment(90)
                 .bedroomNumber(4)
                 .habitability("Updated Habitability")
-                .numberRooms(6)
-                .numberOfBedrooms(4)
-                .habitabilityBuilding("Updated Building")
+                .caregiverCondition("Updated Caregiver")
+                .caringCondition("Updated Caring")
+                .membersWork(3)
+                .workingTime("Part-time")
+                .monthlyIncome(BigDecimal.valueOf(2000.00))
+                .monthlyExpense(BigDecimal.valueOf(900.00))
                 .build();
     }
 
@@ -161,25 +171,15 @@ class HousingDetailsServiceTest {
     void update_ShouldReturnUpdatedHousingDetails_WhenHousingDetailsExists() {
         // Given
         when(housingDetailsRepository.findById(1)).thenReturn(Mono.just(housingDetails));
-        when(housingDetailsRepository.save(any(HousingDetails.class))).thenReturn(Mono.just(housingDetails));
+        when(housingDetailsRepository.save(any(HousingDetails.class))).thenReturn(Mono.just(updatedHousingDetails));
 
         // When & Then
         StepVerifier.create(housingDetailsService.update(1, updatedHousingDetails))
-                .expectNextMatches(housing -> 
-                    "Updated House".equals(housing.getTypeOfHousing()) &&
-                    "Updated Material".equals(housing.getHousingMaterial()) &&
-                    "Updated Security".equals(housing.getHousingSecurity()) &&
-                    Integer.valueOf(90).equals(housing.getHomeEnvironment()) &&
-                    Integer.valueOf(4).equals(housing.getBedroomNumber()) &&
-                    "Updated Habitability".equals(housing.getHabitability()) &&
-                    Integer.valueOf(6).equals(housing.getNumberRooms()) &&
-                    Integer.valueOf(4).equals(housing.getNumberOfBedrooms()) &&
-                    "Updated Building".equals(housing.getHabitabilityBuilding())
-                )
+                .expectNext(updatedHousingDetails)
                 .verifyComplete();
 
         verify(housingDetailsRepository).findById(1);
-        verify(housingDetailsRepository).save(any(HousingDetails.class));
+        verify(housingDetailsRepository).save(updatedHousingDetails);
     }
 
     /**

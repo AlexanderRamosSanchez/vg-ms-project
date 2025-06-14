@@ -88,14 +88,18 @@ public class HousingDetailsService {
             return;
         }
         
+        housing.setTenure(dto.getTenure());
         housing.setTypeOfHousing(dto.getTypeOfHousing());
         housing.setHousingMaterial(dto.getHousingMaterial());
         housing.setHousingSecurity(dto.getHousingSecurity());
         housing.setHomeEnvironment(dto.getHomeEnvironment());
         housing.setBedroomNumber(dto.getBedroomNumber());
         housing.setHabitability(dto.getHabitability());
-        housing.setNumberRooms(dto.getNumberRooms());
-        housing.setNumberOfBedrooms(dto.getNumberOfBedrooms());
-        housing.setHabitabilityBuilding(dto.getHabitabilityBuilding());
+        housing.setCaregiverCondition(dto.getCaregiverCondition());
+        housing.setCaringCondition(dto.getCaringCondition());
+        housing.setMembersWork(dto.getMembersWork());
+        housing.setWorkingTime(dto.getWorkingTime());
+        housing.setMonthlyIncome(dto.getMonthlyIncome());
+        housing.setMonthlyExpense(dto.getMonthlyExpense());
     }
 }

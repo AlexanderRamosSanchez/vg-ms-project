@@ -17,6 +17,7 @@ import pe.edu.vallegrande.information.service.HousingDetailsService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -305,15 +306,19 @@ class HousingDetailsControllerTest {
     private HousingDetails createTestHousingDetails() {
         return HousingDetails.builder()
             .id(1)
+            .tenure("Propio")
             .typeOfHousing("Casa")
             .housingMaterial("Material Noble")
             .housingSecurity("Rejas y portón")
             .homeEnvironment(3)
             .bedroomNumber(3)
             .habitability("Buena")
-            .numberRooms(5)
-            .numberOfBedrooms(3)
-            .habitabilityBuilding("Excelente")
+            .caregiverCondition("Available")
+            .caringCondition("Good")
+            .membersWork(2)
+            .workingTime("Full-time")
+            .monthlyIncome(BigDecimal.valueOf(1500.00))
+            .monthlyExpense(BigDecimal.valueOf(800.00))
             .build();
     }
 

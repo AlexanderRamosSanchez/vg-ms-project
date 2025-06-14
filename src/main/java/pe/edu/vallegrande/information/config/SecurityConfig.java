@@ -1,4 +1,4 @@
-package pe.edu.vallegrande.database.config;
+package pe.edu.vallegrande.information.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

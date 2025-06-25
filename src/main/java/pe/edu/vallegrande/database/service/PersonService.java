@@ -139,6 +139,7 @@ public class PersonService {
         person.setDocumentNumber(updatedPerson.getDocumentNumber());
         person.setTypeKinship(updatedPerson.getTypeKinship());
         person.setSponsored(updatedPerson.getSponsored());
+        person.setEducationLevel(updatedPerson.getEducationLevel());
         person.setState(updatedPerson.getState());
         person.setFamilyIdFamily(updatedPerson.getFamilyIdFamily());
     }

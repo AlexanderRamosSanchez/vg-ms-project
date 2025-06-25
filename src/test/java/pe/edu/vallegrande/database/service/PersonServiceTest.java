@@ -43,11 +43,11 @@ class PersonServiceTest {
     @BeforeEach
     void setUp() {
         person1 = new Person(1, "Juan", "Pérez", 25, LocalDate.of(1998, 5, 15), 
-                            "DNI", "12345678", "Padre", "Sí", "A", 1);
+                            "DNI", "12345678", "Padre", "Sí", "Primaria", "A", 1);
         person2 = new Person(2, "María", "González", 30, LocalDate.of(1993, 8, 20), 
-                            "DNI", "87654321", "Madre", "No", "A", 1);
+                            "DNI", "87654321", "Madre", "No", "Primaria", "A", 1);
         person3 = new Person(3, "Pedro", "López", 22, LocalDate.of(2001, 3, 10), 
-                            "DNI", "11223344", "Hijo", "Sí", "I", 2);
+                            "DNI", "11223344", "Hijo", "Sí", "Primaria", "I", 2);
     }
 
     @Nested
@@ -59,7 +59,7 @@ class PersonServiceTest {
         void shouldReturnActivePersonsSortedById() {
             // Given
             Person personWithHigherId = new Person(10, "Ana", "Martínez", 28, LocalDate.of(1995, 7, 12), 
-                                                  "DNI", "55566677", "Hermana", "No", "A", 1);
+                                                  "DNI", "55566677", "Hermana", "No", "Primaria", "A", 1);
             List<Person> unsortedPersons = Arrays.asList(personWithHigherId, person1, person2);
             
             when(personRepository.findByState("A")).thenReturn(Flux.fromIterable(unsortedPersons));
@@ -103,9 +103,9 @@ class PersonServiceTest {
         void shouldCreatePersonWithoutFamilyValidationWhenFamilyIdIsNull() {
             // Given
             Person personWithoutFamily = new Person(null, "Carlos", "Ruiz", 35, LocalDate.of(1988, 12, 5), 
-                                                   "DNI", "99887766", "Tío", "No", null, null);
+                                                   "DNI", "99887766", "Tío", "No", "Primaria", null, null);
             Person savedPerson = new Person(4, "Carlos", "Ruiz", 35, LocalDate.of(1988, 12, 5), 
-                                           "DNI", "99887766", "Tío", "No", "A", null);
+                                           "DNI", "99887766", "Tío", "No", "Primaria", "A", null);
 
             when(personRepository.save(any(Person.class))).thenReturn(Mono.just(savedPerson));
 
@@ -123,7 +123,7 @@ class PersonServiceTest {
         void shouldCreatePersonWithFamilyValidationWhenFamilyExists() {
             // Given
             Person savedPerson = new Person(1, "Juan", "Pérez", 25, LocalDate.of(1998, 5, 15), 
-                                           "DNI", "12345678", "Padre", "Sí", "A", 1);
+                                           "DNI", "12345678", "Padre", "Sí", "Primaria", "A", 1);
 
             when(familyServiceClient.familyExists(1)).thenReturn(Mono.just(true));
             when(personRepository.save(any(Person.class))).thenReturn(Mono.just(savedPerson));
@@ -142,11 +142,11 @@ class PersonServiceTest {
         void shouldCreateMultiplePersonsWithMixedScenarios() {
             // Given
             Person personWithoutFamily = new Person(null, "Carlos", "Ruiz", 35, LocalDate.of(1988, 12, 5), 
-                                                   "DNI", "99887766", "Tío", "No", null, null);
+                                                   "DNI", "99887766", "Tío", "No", "Primaria", null, null);
             Person savedPerson1 = new Person(1, "Juan", "Pérez", 25, LocalDate.of(1998, 5, 15), 
-                                            "DNI", "12345678", "Padre", "Sí", "A", 1);
+                                            "DNI", "12345678", "Padre", "Sí", "Primaria", "A", 1);
             Person savedPerson2 = new Person(4, "Carlos", "Ruiz", 35, LocalDate.of(1988, 12, 5), 
-                                            "DNI", "99887766", "Tío", "No", "A", null);
+                                            "DNI", "99887766", "Tío", "No", "Primaria", "A", null);
 
             when(familyServiceClient.familyExists(1)).thenReturn(Mono.just(true));
             when(personRepository.save(any(Person.class)))
@@ -173,7 +173,7 @@ class PersonServiceTest {
         void shouldLogicallyDeletePersonWhenPersonExists() {
             // Given
             Person deletedPerson = new Person(1, "Juan", "Pérez", 25, LocalDate.of(1998, 5, 15), 
-                                             "DNI", "12345678", "Padre", "Sí", "I", 1);
+                                             "DNI", "12345678", "Padre", "Sí", "Primaria", "I", 1);
 
             when(personRepository.findById(1)).thenReturn(Mono.just(person1));
             when(personRepository.save(any(Person.class))).thenReturn(Mono.just(deletedPerson));
@@ -197,7 +197,7 @@ class PersonServiceTest {
         void shouldReactivatePersonWhenPersonExists() {
             // Given
             Person reactivatedPerson = new Person(3, "Pedro", "López", 22, LocalDate.of(2001, 3, 10), 
-                                                 "DNI", "11223344", "Hijo", "Sí", "A", 2);
+                                                 "DNI", "11223344", "Hijo", "Sí", "Primaria", "A", 2);
 
             when(personRepository.findById(3)).thenReturn(Mono.just(person3));
             when(personRepository.save(any(Person.class))).thenReturn(Mono.just(reactivatedPerson));
@@ -236,7 +236,7 @@ class PersonServiceTest {
         void shouldFilterOutInactivePersons() {
             // Given
             Person inactivePerson = new Person(4, "Ana", "Martínez", 28, LocalDate.of(1995, 7, 12), 
-                                              "DNI", "55566677", "Hermana", "No", "I", 1);
+                                              "DNI", "55566677", "Hermana", "No", "Primaria", "I", 1);
             
             when(personRepository.findByFamilyIdFamily(1)).thenReturn(Flux.just(person1, inactivePerson));
 
@@ -258,9 +258,9 @@ class PersonServiceTest {
         void shouldUpdatePersonWhenPersonExists() {
             // Given
             Person updatedData = new Person(null, "Juan Carlos", "Pérez García", 26, LocalDate.of(1997, 5, 15), 
-                                           "DNI", "12345678", "Padre", "No", "A", 2);
+                                           "DNI", "12345678", "Padre", "No", "Primaria", "A", 2);
             Person savedPerson = new Person(1, "Juan Carlos", "Pérez García", 26, LocalDate.of(1997, 5, 15), 
-                                           "DNI", "12345678", "Padre", "No", "A", 2);
+                                           "DNI", "12345678", "Padre", "No", "Primaria", "A", 2);
 
             when(personRepository.findById(1)).thenReturn(Mono.just(person1));
             when(personRepository.save(any(Person.class))).thenReturn(Mono.just(savedPerson));
@@ -283,7 +283,7 @@ class PersonServiceTest {
         void shouldReturnEmptyWhenPersonDoesNotExistForUpdate() {
             // Given
             Person updatedData = new Person(null, "Juan Carlos", "Pérez García", 26, LocalDate.of(1997, 5, 15), 
-                                           "DNI", "12345678", "Padre", "No", "A", 2);
+                                           "DNI", "12345678", "Padre", "No", "Primaria", "A", 2);
 
             when(personRepository.findById(999)).thenReturn(Mono.empty());
 

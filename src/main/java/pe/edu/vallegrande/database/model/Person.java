@@ -24,6 +24,7 @@ public class Person {
     private String documentNumber;
     private String typeKinship;
     private String sponsored;
+    private String educationLevel;
     private String state;
     private Integer familyIdFamily;
 

@@ -429,6 +429,7 @@ class PersonControllerTest {
         person.setDocumentNumber("12345678");
         person.setTypeKinship("Jefe de familia");
         person.setSponsored("No");
+        person.setEducationLevel("Primaria");
         person.setState("A");
         person.setFamilyIdFamily(1);
         return person;

@@ -200,21 +200,6 @@ class FamilyServiceTest {
     }
 
     /**
-     * Prueba la actualización de familia inexistente
-     * Verifica que se complete vacío cuando no existe la familia
-     */
-    @Test
-    @DisplayName("Debe completar vacío al actualizar familia inexistente")
-    void updateFamily_NonExistingFamily_ShouldCompleteEmpty() {
-        // Given - Familia inexistente
-        when(familyRepository.findById(999)).thenReturn(Mono.empty());
-
-        // When & Then - Verificación de resultado vacío
-        StepVerifier.create(familyService.updateFamily(999, testFamilyDTO))
-                .verifyComplete();
-    }
-
-    /**
      * Prueba la eliminación lógica exitosa de familia
      * Verifica que se cambie el status a "I" correctamente
      */

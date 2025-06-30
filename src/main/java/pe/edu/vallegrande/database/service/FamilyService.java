@@ -25,35 +25,58 @@ public class FamilyService {
     private final FamilyEventService familyEventService;
     private final FamilyMapper familyMapper;
     private final HousingServiceClient housingServiceClient;
+    private final AdmissionReasonService admissionReasonService;
 
     @Autowired
     public FamilyService(
             FamilyRepository familyRepository,
             FamilyEventService familyEventService,
             FamilyMapper familyMapper,
-            HousingServiceClient housingServiceClient) {
+            HousingServiceClient housingServiceClient,
+            AdmissionReasonService admissionReasonService) {
         this.familyRepository = familyRepository;
         this.familyEventService = familyEventService;
         this.familyMapper = familyMapper;
         this.housingServiceClient = housingServiceClient;
+        this.admissionReasonService = admissionReasonService;
     }
 
     /**
-     * Mapea una entidad Family a un FamilyDTO incluyendo sus servicios básicos y detalles de vivienda
-     * obtenidos del otro microservicio
+     * Mapea una entidad Family a un FamilyDTO incluyendo sus servicios básicos, 
+     * detalles de vivienda y texto de razón de admisión
      */
     public Mono<FamilyDTO> mapToFamilyDTO(Family family) {
         FamilyDTO dto = familyMapper.toDTO(family);
 
-        // Obtener servicios básicos del otro microservicio si existen
-        Mono<FamilyDTO> withBasicService = family.getServiceId() != null
-                ? housingServiceClient.getBasicServiceById(family.getServiceId())
-                    .map(basicService -> {
-                        dto.setBasicService(basicService);
+        // Obtener el texto de la razón de admisión
+        Mono<FamilyDTO> withAdmissionReason = family.getReasibAdmission() != null
+                ? admissionReasonService.getReasonTextById(family.getReasibAdmission())
+                    .map(reasonText -> {
+                        dto.setReasibAdmissionText(reasonText);
                         return dto;
                     })
                     .defaultIfEmpty(dto)
+                    .onErrorResume(e -> {
+                        logger.warn("Error obteniendo razón de admisión para ID {}: {}", family.getReasibAdmission(), e.getMessage());
+                        return Mono.just(dto);
+                    })
                 : Mono.just(dto);
+
+        // Obtener servicios básicos del otro microservicio si existen
+        Mono<FamilyDTO> withBasicService = withAdmissionReason.flatMap(dtoWithReason ->
+            family.getServiceId() != null
+                ? housingServiceClient.getBasicServiceById(family.getServiceId())
+                    .map(basicService -> {
+                        dtoWithReason.setBasicService(basicService);
+                        return dtoWithReason;
+                    })
+                    .defaultIfEmpty(dtoWithReason)
+                    .onErrorResume(e -> {
+                        logger.warn("Error obteniendo servicio básico para ID {}: {}", family.getServiceId(), e.getMessage());
+                        return Mono.just(dtoWithReason);
+                    })
+                : Mono.just(dtoWithReason)
+        );
 
         // Obtener detalles de vivienda del otro microservicio si existen
         return withBasicService.flatMap(dtoWithService -> 
@@ -64,6 +87,10 @@ public class FamilyService {
                         return dtoWithService;
                     })
                     .defaultIfEmpty(dtoWithService)
+                    .onErrorResume(e -> {
+                        logger.warn("Error obteniendo detalles de vivienda para ID {}: {}", family.getHousingId(), e.getMessage());
+                        return Mono.just(dtoWithService);
+                    })
                 : Mono.just(dtoWithService)
         );
     }
@@ -99,10 +126,18 @@ public class FamilyService {
      * en el otro microservicio
      */
     public Mono<FamilyDTO> createFamily(FamilyDTO familyDTO) {
+        // Validar que el reasibAdmission existe si se proporciona
+        Mono<Void> validationMono = familyDTO.getReasibAdmission() != null
+                ? admissionReasonService.findById(familyDTO.getReasibAdmission())
+                    .switchIfEmpty(Mono.error(new IllegalArgumentException("Razón de admisión no válida con ID: " + familyDTO.getReasibAdmission())))
+                    .then()
+                : Mono.empty();
+
         Mono<BasicServiceDTO> basicServiceMono = createBasicServiceInOtherService(familyDTO);
         Mono<HousingDetailsDTO> housingDetailsMono = createHousingDetailsInOtherService(familyDTO);
 
-        return Mono.zip(basicServiceMono, housingDetailsMono)
+        return validationMono
+                .then(Mono.zip(basicServiceMono, housingDetailsMono))
                 .flatMap(tuple -> {
                     BasicServiceDTO savedBasicService = tuple.getT1();
                     HousingDetailsDTO savedHousingDetails = tuple.getT2();
@@ -125,6 +160,9 @@ public class FamilyService {
                 })
                 .onErrorResume(e -> {
                     logger.error("Error creating family", e);
+                    if (e instanceof IllegalArgumentException) {
+                        return Mono.error(e);
+                    }
                     return Mono.error(new RuntimeException("Error durante la creación de la familia: " + e.getMessage()));
                 });
     }
@@ -134,7 +172,16 @@ public class FamilyService {
      * en el otro microservicio
      */
     public Mono<FamilyDTO> updateFamily(Integer id, FamilyDTO familyDTO) {
-        return familyRepository.findById(id)
+        // Validar que el reasibAdmission existe si se proporciona
+        Mono<Void> validationMono = familyDTO.getReasibAdmission() != null
+                ? admissionReasonService.findById(familyDTO.getReasibAdmission())
+                    .switchIfEmpty(Mono.error(new IllegalArgumentException("Razón de admisión no válida con ID: " + familyDTO.getReasibAdmission())))
+                    .then()
+                : Mono.empty();
+
+        return validationMono
+                .then(familyRepository.findById(id))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Familia no encontrada con ID: " + id)))
                 .flatMap(existingFamily -> {
                     familyMapper.updateEntityFromDTO(existingFamily, familyDTO);
                     
@@ -151,6 +198,9 @@ public class FamilyService {
                 .flatMap(this::mapToFamilyDTO)
                 .onErrorResume(e -> {
                     logger.error("Error updating family", e);
+                    if (e instanceof IllegalArgumentException) {
+                        return Mono.error(e);
+                    }
                     return Mono.error(new RuntimeException("Error durante la actualización de la familia: " + e.getMessage()));
                 });
     }

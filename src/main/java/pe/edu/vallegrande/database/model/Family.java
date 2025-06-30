@@ -14,7 +14,7 @@ public class Family {
     private Integer id;
     private String lastName;
     private String direction;
-    private String reasibAdmission;
+    private Integer reasibAdmission;
     private Integer numberMembers;
     private Integer numberChildren;
     private String familyType;

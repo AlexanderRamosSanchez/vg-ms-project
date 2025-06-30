@@ -4,9 +4,9 @@ spring:
 
   r2dbc:
     # Conexión a la base de datos Family
-    url: ${R2DBC_URL} #r2dbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres
-    username: ${R2DBC_USERNAME} #postgres.hjazvqbxrkrjvcmznljy
-    password: ${R2DBC_PASSWORD} #npg_jnBdH2M7gwJz
+    url: ${R2DBC_URL} #r2dbc:postgresql://aws-0-us-east-2.pooler.supabase.com:5432/postgres
+    username: ${R2DBC_USERNAME} #postgres.xthpmrtuifrhlcxszifd
+    password: ${R2DBC_PASSWORD} #nphfamilyversion2
     pool:
       max-size: 20
       min-size: 5

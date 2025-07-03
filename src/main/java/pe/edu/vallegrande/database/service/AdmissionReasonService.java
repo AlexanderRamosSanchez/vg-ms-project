@@ -55,18 +55,6 @@ public class AdmissionReasonService {
     }
 
     /**
-     * Actualiza una razón de admisión existente
-     */
-    public Mono<AdmissionReasonDTO> update(Integer id, AdmissionReasonDTO admissionReasonDTO) {
-        return admissionReasonRepository.findById(id)
-                .flatMap(existingReason -> {
-                    existingReason.setReason(admissionReasonDTO.getReason());
-                    return admissionReasonRepository.save(existingReason);
-                })
-                .map(this::mapToDTO);
-    }
-
-    /**
      * Mapeo de entidad a DTO
      */
     private AdmissionReasonDTO mapToDTO(AdmissionReason admissionReason) {

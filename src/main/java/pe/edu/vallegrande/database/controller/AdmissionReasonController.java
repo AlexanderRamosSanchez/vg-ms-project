@@ -34,12 +34,4 @@ public class AdmissionReasonController {
     public Mono<AdmissionReasonDTO> createAdmissionReason(@RequestBody AdmissionReasonDTO admissionReasonDTO) {
         return admissionReasonService.create(admissionReasonDTO);
     }
-
-    /**
-     * Actualiza una razón de admisión existente
-     */
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<AdmissionReasonDTO> updateAdmissionReason(@PathVariable Integer id, @RequestBody AdmissionReasonDTO admissionReasonDTO) {
-        return admissionReasonService.update(id, admissionReasonDTO);
-    }
 }

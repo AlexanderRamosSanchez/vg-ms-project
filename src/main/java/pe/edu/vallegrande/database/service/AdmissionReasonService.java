@@ -43,6 +43,30 @@ public class AdmissionReasonService {
     }
 
     /**
+     * Crea una nueva razón de admisión
+     */
+    public Mono<AdmissionReasonDTO> create(AdmissionReasonDTO admissionReasonDTO) {
+        AdmissionReason admissionReason = new AdmissionReason();
+        admissionReason.setReason(admissionReasonDTO.getReason());
+        // El ID se genera automáticamente en la BD, por lo que no lo asignamos
+        
+        return admissionReasonRepository.save(admissionReason)
+                .map(this::mapToDTO);
+    }
+
+    /**
+     * Actualiza una razón de admisión existente
+     */
+    public Mono<AdmissionReasonDTO> update(Integer id, AdmissionReasonDTO admissionReasonDTO) {
+        return admissionReasonRepository.findById(id)
+                .flatMap(existingReason -> {
+                    existingReason.setReason(admissionReasonDTO.getReason());
+                    return admissionReasonRepository.save(existingReason);
+                })
+                .map(this::mapToDTO);
+    }
+
+    /**
      * Mapeo de entidad a DTO
      */
     private AdmissionReasonDTO mapToDTO(AdmissionReason admissionReason) {

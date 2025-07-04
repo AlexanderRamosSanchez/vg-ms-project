@@ -38,7 +38,7 @@ public class SecurityConfig {
 
                         // API endpoints con autenticación
                         // GET: accesible por USER y ADMIN
-                        .pathMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "USER")
+                        .pathMatchers(HttpMethod.GET, "/api/**").permitAll()
 
                         // POST, PUT, DELETE: solo ADMIN
                         .pathMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN")

@@ -2,7 +2,9 @@ package pe.edu.vallegrande.database.service;
 
 import org.springframework.stereotype.Service;
 
+import pe.edu.vallegrande.database.kafka.producer.KafkaProducerService;
 import pe.edu.vallegrande.database.model.Person;
+import pe.edu.vallegrande.database.model.event.PersonEvent;
 import pe.edu.vallegrande.database.repository.PersonRepository;
 import pe.edu.vallegrande.database.webclient.FamilyServiceClient;
 import reactor.core.publisher.Flux;
@@ -13,10 +15,13 @@ public class PersonService {
 
     private final PersonRepository personRepository;
     private final FamilyServiceClient familyServiceClient;
+    private final KafkaProducerService kafkaProducerService;
 
-    public PersonService(PersonRepository personRepository, FamilyServiceClient familyServiceClient) {
+    public PersonService(PersonRepository personRepository, FamilyServiceClient familyServiceClient,
+            KafkaProducerService kafkaProducerService) {
         this.personRepository = personRepository;
         this.familyServiceClient = familyServiceClient;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     /**
@@ -53,7 +58,12 @@ public class PersonService {
      * Elimina lógicamente una persona (cambia estado a inactivo)
      */
     public Mono<Person> logicallyDelete(Integer id) {
-        return findPersonByIdAndUpdateState(id, "I");
+        return personRepository.findById(id)
+                .flatMap(person -> {
+                    person.setState("I");
+                    return personRepository.save(person)
+                            .doOnSuccess(saved -> kafkaProducerService.sendPersonEvent(mapToEvent(saved, "UPDATED")));
+                });
     }
 
     /**
@@ -79,7 +89,8 @@ public class PersonService {
                 .flatMap(person -> {
                     updatePersonData(person, updatedPerson);
                     return personRepository.save(person);
-                });
+                })
+                .doOnSuccess(updated -> kafkaProducerService.sendPersonEvent(mapToEvent(updated, "UPDATED")));
     }
 
     /**
@@ -89,7 +100,8 @@ public class PersonService {
         return personRepository.findByFamilyIdFamily(familyId)
                 .flatMap(person -> {
                     person.setState("I");
-                    return personRepository.save(person);
+                    return personRepository.save(person)
+                            .doOnSuccess(saved -> kafkaProducerService.sendPersonEvent(mapToEvent(saved, "UPDATED")));
                 });
     }
 
@@ -100,7 +112,8 @@ public class PersonService {
         return personRepository.findByFamilyIdFamily(familyId)
                 .flatMap(person -> {
                     person.setState("A");
-                    return personRepository.save(person);
+                    return personRepository.save(person)
+                            .doOnSuccess(saved -> kafkaProducerService.sendPersonEvent(mapToEvent(saved, "UPDATED")));
                 });
     }
 
@@ -119,7 +132,8 @@ public class PersonService {
 
     private Mono<Person> savePersonWithActiveState(Person person) {
         person.setState("A");
-        return personRepository.save(person);
+        return personRepository.save(person)
+                .doOnSuccess(saved -> kafkaProducerService.sendPersonEvent(mapToEvent(saved, "CREATED")));
     }
 
     private Mono<Person> findPersonByIdAndUpdateState(Integer id, String state) {
@@ -142,5 +156,18 @@ public class PersonService {
         person.setEducationLevel(updatedPerson.getEducationLevel());
         person.setState(updatedPerson.getState());
         person.setFamilyIdFamily(updatedPerson.getFamilyIdFamily());
+    }
+
+    private PersonEvent mapToEvent(Person person, String eventType) {
+        return new PersonEvent(
+                person.getIdPerson(),
+                person.getName(),
+                person.getSurname(),
+                person.getAge(),
+                person.getTypeKinship(),
+                person.getSponsored(),
+                person.getState(),
+                person.getFamilyIdFamily(),
+                eventType);
     }
 }

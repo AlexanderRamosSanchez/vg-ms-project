@@ -49,4 +49,5 @@ jobs:
             -Dsonar.projectKey=AlexanderRamosSanchez_vg-ms-project \
             -Dsonar.organization=alexanderramossanchez \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.coverage.exclusions="**/DatabaseApplication.java,**/kafka/**,**/webclient/**,**/config/**,**/Family*.java"

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebClientConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">database</a> &gt; <a href="index.source.html" class="el_package">pe.edu.vallegrande.database.webclient</a> &gt; <span class="el_source">WebClientConfig.java</span></div><h1>WebClientConfig.java</h1><pre class="source lang-java linenums">package pe.edu.vallegrande.database.webclient;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Configuration
+<span class="fc" id="L12">public class WebClientConfig {</span>
+
+    @Value(&quot;${spring.family.service-url}&quot;)
+    private String familyServiceUrl;
+
+    @Bean
+    public WebClient familyServiceWebClient() {
+<span class="fc" id="L19">        return WebClient.builder()</span>
+<span class="fc" id="L20">                .baseUrl(familyServiceUrl)</span>
+<span class="fc" id="L21">                .filter(authHeaderFilter())</span>
+<span class="fc" id="L22">                .build();</span>
+    }
+
+    private ExchangeFilterFunction authHeaderFilter() {
+<span class="pc" id="L26">        return (request, next) -&gt; Mono.deferContextual(ctx -&gt; {</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">            if (ctx.hasKey(&quot;Authorization&quot;)) {</span>
+<span class="nc" id="L28">                String token = ctx.get(&quot;Authorization&quot;);</span>
+<span class="nc" id="L29">                return next.exchange(</span>
+<span class="nc" id="L30">                        ClientRequest.from(request)</span>
+<span class="nc" id="L31">                                .headers(headers -&gt; headers.setBearerAuth(token))</span>
+<span class="nc" id="L32">                                .build()</span>
+                );
+            }
+<span class="nc" id="L35">            return next.exchange(request);</span>
+        });
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

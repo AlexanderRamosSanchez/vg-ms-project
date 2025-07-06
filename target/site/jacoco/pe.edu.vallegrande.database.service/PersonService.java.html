@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">database</a> &gt; <a href="index.source.html" class="el_package">pe.edu.vallegrande.database.service</a> &gt; <span class="el_source">PersonService.java</span></div><h1>PersonService.java</h1><pre class="source lang-java linenums">package pe.edu.vallegrande.database.service;
+
+import org.springframework.stereotype.Service;
+
+import pe.edu.vallegrande.database.kafka.producer.KafkaProducerService;
+import pe.edu.vallegrande.database.model.Person;
+import pe.edu.vallegrande.database.model.event.PersonEvent;
+import pe.edu.vallegrande.database.repository.PersonRepository;
+import pe.edu.vallegrande.database.webclient.FamilyServiceClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Service
+public class PersonService {
+
+    private final PersonRepository personRepository;
+    private final FamilyServiceClient familyServiceClient;
+    private final KafkaProducerService kafkaProducerService;
+
+    public PersonService(PersonRepository personRepository, FamilyServiceClient familyServiceClient,
+<span class="fc" id="L21">            KafkaProducerService kafkaProducerService) {</span>
+<span class="fc" id="L22">        this.personRepository = personRepository;</span>
+<span class="fc" id="L23">        this.familyServiceClient = familyServiceClient;</span>
+<span class="fc" id="L24">        this.kafkaProducerService = kafkaProducerService;</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Obtiene lista de personas activas, ordenadas por ID
+     */
+    public Flux&lt;Person&gt; listActive() {
+<span class="fc" id="L31">        return personRepository.findByState(&quot;A&quot;)</span>
+<span class="fc" id="L32">                .sort((p1, p2) -&gt; p1.getIdPerson().compareTo(p2.getIdPerson()));</span>
+    }
+
+    /**
+     * Obtiene lista de personas inactivas, ordenadas por ID
+     */
+    public Flux&lt;Person&gt; listInactive() {
+<span class="fc" id="L39">        return personRepository.findByState(&quot;I&quot;)</span>
+<span class="pc" id="L40">                .sort((p1, p2) -&gt; p1.getIdPerson().compareTo(p2.getIdPerson()));</span>
+    }
+
+    /**
+     * Crea múltiples personas validando que las familias asociadas existan
+     */
+    public Flux&lt;Person&gt; createPersons(Flux&lt;Person&gt; persons) {
+<span class="fc" id="L47">        return persons.flatMap(person -&gt; {</span>
+<span class="fc" id="L48">            Integer familyId = person.getFamilyIdFamily();</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">            if (familyId != null) {</span>
+<span class="fc" id="L50">                return validateFamilyAndSavePerson(person, familyId);</span>
+            } else {
+<span class="nc" id="L52">                return savePersonWithActiveState(person);</span>
+            }
+        });
+    }
+
+    /**
+     * Elimina lógicamente una persona (cambia estado a inactivo)
+     */
+    public Mono&lt;Person&gt; logicallyDelete(Integer id) {
+<span class="fc" id="L61">        return personRepository.findById(id)</span>
+<span class="fc" id="L62">                .flatMap(person -&gt; {</span>
+<span class="fc" id="L63">                    person.setState(&quot;I&quot;);</span>
+<span class="fc" id="L64">                    return personRepository.save(person)</span>
+<span class="fc" id="L65">                            .doOnSuccess(saved -&gt; kafkaProducerService.sendPersonEvent(mapToEvent(saved, &quot;UPDATED&quot;)));</span>
+                });
+    }
+
+    /**
+     * Reactiva una persona (cambia estado a activo)
+     */
+    public Mono&lt;Person&gt; reactivate(Integer id) {
+<span class="fc" id="L73">        return findPersonByIdAndUpdateState(id, &quot;A&quot;);</span>
+    }
+
+    /**
+     * Lista personas por ID de familia
+     */
+    public Flux&lt;Person&gt; listByFamily(Integer familyId) {
+<span class="fc" id="L80">        return personRepository.findByFamilyIdFamily(familyId)</span>
+<span class="fc" id="L81">                .filter(person -&gt; person.getState().equals(&quot;A&quot;));</span>
+    }
+
+    /**
+     * Actualiza los datos de una persona existente
+     */
+    public Mono&lt;Person&gt; updatePerson(Integer id, Person updatedPerson) {
+<span class="fc" id="L88">        return personRepository.findById(id)</span>
+<span class="fc" id="L89">                .flatMap(person -&gt; {</span>
+<span class="fc" id="L90">                    updatePersonData(person, updatedPerson);</span>
+<span class="fc" id="L91">                    return personRepository.save(person);</span>
+                })
+<span class="fc" id="L93">                .doOnSuccess(updated -&gt; kafkaProducerService.sendPersonEvent(mapToEvent(updated, &quot;UPDATED&quot;)));</span>
+    }
+
+    /**
+     * Elimina lógicamente las personas asociadas a una familia específica
+     */
+    public Flux&lt;Person&gt; deletePersonsByFamilyId(Integer familyId) {
+<span class="nc" id="L100">        return personRepository.findByFamilyIdFamily(familyId)</span>
+<span class="nc" id="L101">                .flatMap(person -&gt; {</span>
+<span class="nc" id="L102">                    person.setState(&quot;I&quot;);</span>
+<span class="nc" id="L103">                    return personRepository.save(person)</span>
+<span class="nc" id="L104">                            .doOnSuccess(saved -&gt; kafkaProducerService.sendPersonEvent(mapToEvent(saved, &quot;UPDATED&quot;)));</span>
+                });
+    }
+
+    /**
+     * Reactiva las personas asociadas a una familia específica
+     */
+    public Flux&lt;Person&gt; reactivatePersonsByFamilyId(Integer familyId) {
+<span class="nc" id="L112">        return personRepository.findByFamilyIdFamily(familyId)</span>
+<span class="nc" id="L113">                .flatMap(person -&gt; {</span>
+<span class="nc" id="L114">                    person.setState(&quot;A&quot;);</span>
+<span class="nc" id="L115">                    return personRepository.save(person)</span>
+<span class="nc" id="L116">                            .doOnSuccess(saved -&gt; kafkaProducerService.sendPersonEvent(mapToEvent(saved, &quot;UPDATED&quot;)));</span>
+                });
+    }
+
+    // Métodos privados auxiliares
+
+    private Mono&lt;Person&gt; validateFamilyAndSavePerson(Person person, Integer familyId) {
+<span class="fc" id="L123">        return familyServiceClient.familyExists(familyId)</span>
+<span class="fc" id="L124">                .flatMap(exists -&gt; {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                    if (Boolean.TRUE.equals(exists)) {</span>
+<span class="fc" id="L126">                        return savePersonWithActiveState(person);</span>
+                    } else {
+<span class="fc" id="L128">                        return Mono.error(new RuntimeException(&quot;La familia con ID &quot; + familyId + &quot; no existe&quot;));</span>
+                    }
+                });
+    }
+
+    private Mono&lt;Person&gt; savePersonWithActiveState(Person person) {
+<span class="fc" id="L134">        person.setState(&quot;A&quot;);</span>
+<span class="fc" id="L135">        return personRepository.save(person)</span>
+<span class="fc" id="L136">                .doOnSuccess(saved -&gt; kafkaProducerService.sendPersonEvent(mapToEvent(saved, &quot;CREATED&quot;)));</span>
+    }
+
+    private Mono&lt;Person&gt; findPersonByIdAndUpdateState(Integer id, String state) {
+<span class="fc" id="L140">        return personRepository.findById(id)</span>
+<span class="fc" id="L141">                .flatMap(person -&gt; {</span>
+<span class="fc" id="L142">                    person.setState(state);</span>
+<span class="fc" id="L143">                    return personRepository.save(person);</span>
+                });
+    }
+
+    private void updatePersonData(Person person, Person updatedPerson) {
+<span class="fc" id="L148">        person.setName(updatedPerson.getName());</span>
+<span class="fc" id="L149">        person.setSurname(updatedPerson.getSurname());</span>
+<span class="fc" id="L150">        person.setAge(updatedPerson.getAge());</span>
+<span class="fc" id="L151">        person.setBirthdate(updatedPerson.getBirthdate());</span>
+<span class="fc" id="L152">        person.setTypeDocument(updatedPerson.getTypeDocument());</span>
+<span class="fc" id="L153">        person.setDocumentNumber(updatedPerson.getDocumentNumber());</span>
+<span class="fc" id="L154">        person.setTypeKinship(updatedPerson.getTypeKinship());</span>
+<span class="fc" id="L155">        person.setSponsored(updatedPerson.getSponsored());</span>
+<span class="fc" id="L156">        person.setEducationLevel(updatedPerson.getEducationLevel());</span>
+<span class="fc" id="L157">        person.setState(updatedPerson.getState());</span>
+<span class="fc" id="L158">        person.setFamilyIdFamily(updatedPerson.getFamilyIdFamily());</span>
+<span class="fc" id="L159">    }</span>
+
+    private PersonEvent mapToEvent(Person person, String eventType) {
+<span class="fc" id="L162">        return new PersonEvent(</span>
+<span class="fc" id="L163">                person.getIdPerson(),</span>
+<span class="fc" id="L164">                person.getName(),</span>
+<span class="fc" id="L165">                person.getSurname(),</span>
+<span class="fc" id="L166">                person.getAge(),</span>
+<span class="fc" id="L167">                person.getTypeKinship(),</span>
+<span class="fc" id="L168">                person.getSponsored(),</span>
+<span class="fc" id="L169">                person.getState(),</span>
+<span class="fc" id="L170">                person.getFamilyIdFamily(),</span>
+                eventType);
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,2 +1,9 @@
-C:\Users\Usuario\Desktop\AS222S6\UpdateProyect\PRS\src\test\java\pe\edu\vallegrande\database\DatabaseApplicationTests.java
-C:\Users\Usuario\Desktop\AS222S6\UpdateProyect\PRS\src\test\java\pe\edu\vallegrande\database\service\PersonServiceTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/DatabaseApplicationTests.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/AuthContextWebFilterTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/ConfigurationTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/JwtConverterConfigTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/SecurityConfigTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/WebClientConfigTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/controller/PersonControllerTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/security/TestSecurityConfig.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/service/PersonServiceTest.java

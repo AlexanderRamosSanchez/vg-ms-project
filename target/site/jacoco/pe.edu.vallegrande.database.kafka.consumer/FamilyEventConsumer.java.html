@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FamilyEventConsumer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">database</a> &gt; <a href="index.source.html" class="el_package">pe.edu.vallegrande.database.kafka.consumer</a> &gt; <span class="el_source">FamilyEventConsumer.java</span></div><h1>FamilyEventConsumer.java</h1><pre class="source lang-java linenums">package pe.edu.vallegrande.database.kafka.consumer;
+
+import org.springframework.stereotype.Component;
+import org.springframework.kafka.annotation.KafkaListener;
+
+import pe.edu.vallegrande.database.kafka.KafkaConsumerConfig;
+import pe.edu.vallegrande.database.model.event.FamilyEvent;
+import pe.edu.vallegrande.database.service.PersonService;
+
+@Component
+public class FamilyEventConsumer {
+
+    private final PersonService personService;
+
+<span class="fc" id="L15">    public FamilyEventConsumer(PersonService personService) {</span>
+<span class="fc" id="L16">        this.personService = personService;</span>
+<span class="fc" id="L17">    }</span>
+
+    /**
+     * Consume eventos de la familia y ejecuta acciones correspondientes según el tipo de evento
+     */
+    @KafkaListener(topics = KafkaConsumerConfig.FAMILY_TOPIC, groupId = &quot;${spring.kafka.consumer.group-id}&quot;)
+    public void consumeFamilyEvent(FamilyEvent event) {
+<span class="nc" id="L24">        Integer familyId = event.getFamilyId();</span>
+<span class="nc" id="L25">        String eventType = event.getEventType();</span>
+
+<span class="nc bnc" id="L27" title="All 3 branches missed.">        switch (eventType) {</span>
+            case &quot;DELETED&quot;:
+                // Si una familia es eliminada lógicamente, eliminar todas las personas asociadas
+<span class="nc" id="L30">                personService.deletePersonsByFamilyId(familyId).subscribe();</span>
+<span class="nc" id="L31">                break;</span>
+            case &quot;UPDATED&quot;:
+                // Si el estado de la familia es &quot;A&quot;, reactivar todas las personas asociadas
+<span class="nc bnc" id="L34" title="All 2 branches missed.">                if (&quot;A&quot;.equals(event.getStatus())) {</span>
+<span class="nc" id="L35">                    personService.reactivatePersonsByFamilyId(familyId).subscribe();</span>
+                }
+                break;
+            default:
+                // Para otros tipos de eventos, no hacer nada
+                break;
+        }
+<span class="nc" id="L42">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

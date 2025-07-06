@@ -1,0 +1,15 @@
+pe/edu/vallegrande/database/repository/PersonRepository.class
+pe/edu/vallegrande/database/controller/PersonController.class
+pe/edu/vallegrande/database/config/SecurityConfig.class
+pe/edu/vallegrande/database/webclient/FamilyServiceClient.class
+pe/edu/vallegrande/database/config/AuthContextWebFilter.class
+pe/edu/vallegrande/database/model/event/FamilyEvent.class
+pe/edu/vallegrande/database/kafka/producer/KafkaProducerService.class
+pe/edu/vallegrande/database/kafka/consumer/FamilyEventConsumer.class
+pe/edu/vallegrande/database/kafka/KafkaConsumerConfig.class
+pe/edu/vallegrande/database/model/Person.class
+pe/edu/vallegrande/database/DatabaseApplication.class
+pe/edu/vallegrande/database/service/PersonService.class
+pe/edu/vallegrande/database/webclient/WebClientConfig.class
+pe/edu/vallegrande/database/model/event/PersonEvent.class
+pe/edu/vallegrande/database/config/JwtConverterConfig.class

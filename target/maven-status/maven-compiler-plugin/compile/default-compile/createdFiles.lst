@@ -1,0 +1,13 @@
+pe/edu/vallegrande/information/controller/HousingDetailsController.class
+pe/edu/vallegrande/information/model/HousingDetails$HousingDetailsBuilder.class
+pe/edu/vallegrande/information/repository/HousingDetailsRepository.class
+pe/edu/vallegrande/information/config/JwtConverterConfig.class
+pe/edu/vallegrande/information/model/BasicService$BasicServiceBuilder.class
+pe/edu/vallegrande/information/repository/BasicServiceRepository.class
+pe/edu/vallegrande/information/model/BasicService.class
+pe/edu/vallegrande/information/DatabaseApplication.class
+pe/edu/vallegrande/information/service/HousingDetailsService.class
+pe/edu/vallegrande/information/controller/BasicServiceController.class
+pe/edu/vallegrande/information/service/BasicServiceService.class
+pe/edu/vallegrande/information/model/HousingDetails.class
+pe/edu/vallegrande/information/config/SecurityConfig.class

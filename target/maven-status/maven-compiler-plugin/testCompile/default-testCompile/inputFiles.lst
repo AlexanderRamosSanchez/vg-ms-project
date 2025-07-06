@@ -1,2 +1,8 @@
-C:\Users\Usuario\Desktop\AS222S6\UpdateProyect\PRS\src\test\java\pe\edu\vallegrande\database\DatabaseApplicationTests.java
-C:\Users\Usuario\Desktop\AS222S6\UpdateProyect\PRS\src\test\java\pe\edu\vallegrande\database\service\PersonServiceTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/DatabaseApplicationTests.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/config/JwtConverterConfigTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/config/SecurityConfigTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/controller/BasicServiceControllerTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/controller/HousingDetailsControllerTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/security/TestSecurityConfig.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/service/BasicServiceServiceTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/information/service/HousingDetailsServiceTest.java

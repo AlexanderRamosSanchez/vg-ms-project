@@ -8,9 +8,7 @@ class DatabaseApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// Este método está presente para verificar que el contexto de la aplicación se carga correctamente.
-		// Actualmente no se necesita lógica adicional aquí.
+		// Este método está vacío porque se utiliza para verificar que el contexto de la aplicación se carga correctamente.
 	}
-
 
 }

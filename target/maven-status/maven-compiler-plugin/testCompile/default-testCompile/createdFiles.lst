@@ -1,1 +1,8 @@
-pe\edu\vallegrande\database\DatabaseApplicationTests.class
+pe/edu/vallegrande/information/DatabaseApplicationTests.class
+pe/edu/vallegrande/information/service/BasicServiceServiceTest.class
+pe/edu/vallegrande/information/config/SecurityConfigTest.class
+pe/edu/vallegrande/information/controller/BasicServiceControllerTest.class
+pe/edu/vallegrande/information/security/TestSecurityConfig.class
+pe/edu/vallegrande/information/service/HousingDetailsServiceTest.class
+pe/edu/vallegrande/information/controller/HousingDetailsControllerTest.class
+pe/edu/vallegrande/information/config/JwtConverterConfigTest.class

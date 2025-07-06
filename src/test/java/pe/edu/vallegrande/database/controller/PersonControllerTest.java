@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(PersonController.class)
 @Import(TestSecurityConfig.class)
-@DisplayName("PersonController - Tests Esenciales")
+@DisplayName("PersonController - Tests Completos")
 class PersonControllerTest {
 
     @Autowired
@@ -45,13 +45,12 @@ class PersonControllerTest {
         testPersonList = createTestPersonList();
     }
 
+    // ========== TESTS EXISTENTES ==========
     @Test
     @DisplayName("GET /active - Debe retornar todas las personas activas")
     void listActive_ShouldReturnActivePersons() {
-        // Given
         when(personService.listActive()).thenReturn(Flux.fromIterable(testPersonList));
 
-        // When & Then
         webTestClient.get()
                 .uri("/api/v1/person/active")
                 .accept(MediaType.APPLICATION_JSON)
@@ -65,13 +64,11 @@ class PersonControllerTest {
     @Test
     @DisplayName("POST / - Debe crear múltiples personas exitosamente")
     void createPersons_ValidData_ShouldCreatePersons() {
-        // Given
         List<Person> inputPersons = createTestPersonList();
         inputPersons.forEach(person -> person.setIdPerson(null));
         
         when(personService.createPersons(any())).thenReturn(Flux.fromIterable(testPersonList));
 
-        // When & Then
         webTestClient.post()
                 .uri("/api/v1/person")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,13 +84,11 @@ class PersonControllerTest {
     @Test
     @DisplayName("PUT /{id} - Debe actualizar persona existente")
     void updatePerson_ExistingPerson_ShouldUpdatePerson() {
-        // Given
         Person updatedPerson = createTestPerson();
         updatedPerson.setName("Juan Carlos");
         
         when(personService.updatePerson(eq(1), any(Person.class))).thenReturn(Mono.just(updatedPerson));
 
-        // When & Then
         webTestClient.put()
                 .uri("/api/v1/person/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -109,12 +104,10 @@ class PersonControllerTest {
     @Test
     @DisplayName("PATCH /delete/{id} - Debe eliminar lógicamente persona existente")
     void logicallyDelete_ExistingPerson_ShouldDeletePerson() {
-        // Given
         Person deletedPerson = createTestPerson();
         deletedPerson.setState("I");
         when(personService.logicallyDelete(1)).thenReturn(Mono.just(deletedPerson));
 
-        // When & Then
         webTestClient.patch()
                 .uri("/api/v1/person/delete/1")
                 .accept(MediaType.APPLICATION_JSON)
@@ -128,12 +121,10 @@ class PersonControllerTest {
     @Test
     @DisplayName("PATCH /active/{id} - Debe reactivar persona existente")
     void reactivate_ExistingPerson_ShouldReactivatePerson() {
-        // Given
         Person reactivatedPerson = createTestPerson();
         reactivatedPerson.setState("A");
         when(personService.reactivate(1)).thenReturn(Mono.just(reactivatedPerson));
 
-        // When & Then
         webTestClient.patch()
                 .uri("/api/v1/person/active/1")
                 .accept(MediaType.APPLICATION_JSON)
@@ -142,6 +133,123 @@ class PersonControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(Person.class)
                 .isEqualTo(reactivatedPerson);
+    }
+
+    // ========== NUEVOS TESTS PARA LLEGAR AL 80% ==========
+
+    @Test
+    @DisplayName("GET /active - Debe retornar lista vacía cuando no hay personas activas")
+    void listActive_WhenNoActivePersons_ShouldReturnEmptyList() {
+        // Given
+        when(personService.listActive()).thenReturn(Flux.empty());
+
+        // When & Then
+        webTestClient.get()
+                .uri("/api/v1/person/active")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBodyList(Person.class)
+                .hasSize(0);
+    }
+
+    @Test
+    @DisplayName("GET /inactive - Debe retornar personas inactivas")
+    void listInactive_ShouldReturnInactivePersons() {
+        // Given
+        Person inactivePerson = createTestPerson();
+        inactivePerson.setState("I");
+        when(personService.listInactive()).thenReturn(Flux.just(inactivePerson));
+
+        // When & Then
+        webTestClient.get()
+                .uri("/api/v1/person/inactive")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBodyList(Person.class)
+                .hasSize(1);
+    }
+
+    @Test
+    @DisplayName("GET /family/{familyId} - Debe retornar personas de una familia")
+    void listByFamily_ShouldReturnPersonsFromFamily() {
+        // Given
+        when(personService.listByFamily(1)).thenReturn(Flux.fromIterable(testPersonList));
+
+        // When & Then
+        webTestClient.get()
+                .uri("/api/v1/person/family/1")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBodyList(Person.class)
+                .hasSize(2);
+    }
+
+    @Test
+    @DisplayName("PUT /{id} - Debe retornar 404 para persona inexistente")
+    void updatePerson_NonExistingPerson_ShouldReturn404() {
+        // Given
+        when(personService.updatePerson(eq(999), any(Person.class))).thenReturn(Mono.empty());
+
+        // When & Then
+        webTestClient.put()
+                .uri("/api/v1/person/999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(testPerson)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("PATCH /delete/{id} - Debe retornar 404 para persona inexistente")
+    void logicallyDelete_NonExistingPerson_ShouldReturn404() {
+        // Given
+        when(personService.logicallyDelete(999)).thenReturn(Mono.empty());
+
+        // When & Then
+        webTestClient.patch()
+                .uri("/api/v1/person/delete/999")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("PATCH /active/{id} - Debe retornar 404 para persona inexistente")
+    void reactivate_NonExistingPerson_ShouldReturn404() {
+        // Given
+        when(personService.reactivate(999)).thenReturn(Mono.empty());
+
+        // When & Then
+        webTestClient.patch()
+                .uri("/api/v1/person/active/999")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("POST / - Debe manejar creación con lista vacía")
+    void createPersons_EmptyList_ShouldReturnEmptyList() {
+        // Given
+        when(personService.createPersons(any())).thenReturn(Flux.empty());
+
+        // When & Then
+        webTestClient.post()
+                .uri("/api/v1/person")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Flux.empty(), Person.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBodyList(Person.class)
+                .hasSize(0);
     }
 
     // ========== MÉTODOS AUXILIARES ==========

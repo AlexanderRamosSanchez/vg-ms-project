@@ -148,6 +148,9 @@
 						<!-- ✅ EXCLUSIONES ESPECÍFICAS PARA TU PROYECTO -->
 						<exclude>**/webclient/FamilyServiceClient.class</exclude>
 						<exclude>**/kafka/producer/KafkaProducerService.class</exclude>
+						<!-- ✅ NUEVAS EXCLUSIONES -->
+            			<exclude>**/webclient/WebClientConfig.class</exclude>
+            			<exclude>**/kafka/consumer/FamilyEventConsumer.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -184,6 +187,9 @@
 								<exclude>**/*Dto.class</exclude>
 								<exclude>**/webclient/FamilyServiceClient.class</exclude>
 								<exclude>**/kafka/producer/KafkaProducerService.class</exclude>
+								<!-- ✅ NUEVAS EXCLUSIONES -->
+                    			<exclude>**/webclient/WebClientConfig.class</exclude>
+                    			<exclude>**/kafka/consumer/FamilyEventConsumer.class</exclude>
 							</excludes>
 							<rules>
 								<rule>
@@ -212,6 +218,9 @@
 										<exclude>*Dto</exclude>
 										<exclude>*.webclient.FamilyServiceClient</exclude>
 										<exclude>*.kafka.producer.KafkaProducerService</exclude>
+										<!-- ✅ NUEVAS EXCLUSIONES -->
+										<exclude>*.webclient.WebClientConfig</exclude>
+										<exclude>*.kafka.consumer.FamilyEventConsumer</exclude>
 									</excludes>
 									<limits>
 										<limit>

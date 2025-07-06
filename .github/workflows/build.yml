@@ -1,5 +1,4 @@
 name: SonarQube
-
 on:
   push:
     branches:
@@ -10,7 +9,7 @@ jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
-
+    
     env:
       R2DBC_URL_PERSON: ${{ secrets.R2DBC_URL_PERSON }}
       R2DBC_USERNAME_PERSON: ${{ secrets.R2DBC_USERNAME_PERSON }}
@@ -41,8 +40,26 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      
+      # ✅ NUEVO: Ejecutar tests y generar cobertura
+      - name: Run tests and generate coverage
+        run: mvn clean test jacoco:report
+      
+      # ✅ NUEVO: Verificar que se generó el reporte
+      - name: Verify coverage report
+        run: |
+          if [ -f "target/site/jacoco/jacoco.xml" ]; then
+            echo "✅ Coverage report generated successfully"
+            ls -la target/site/jacoco/
+          else
+            echo "❌ Coverage report not found"
+            exit 1
+          fi
+      
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=AlexanderRamosSanchez_vg-ms-project
-        
+        run: |
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=AlexanderRamosSanchez_vg-ms-project \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

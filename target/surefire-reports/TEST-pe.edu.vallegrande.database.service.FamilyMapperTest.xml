@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.929" tests="14" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.168" tests="12" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -59,119 +59,16 @@
     <property name="java.class.version" value="61.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[vg-ms-family] "/>
   </properties>
-  <testcase name="getFamilyDetailById_NonExistingFamily_ShouldReturn404" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.09">
-    <system-out><![CDATA[2025-07-08T02:36:46.131Z  INFO 35458 --- [vg-ms-family] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [pe.edu.vallegrande.database.controller.FamilyControllerTest]: FamilyControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2025-07-08T02:36:46.162Z  INFO 35458 --- [vg-ms-family] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration pe.edu.vallegrande.database.DatabaseApplication for test class pe.edu.vallegrande.database.controller.FamilyControllerTest
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
-
- :: Spring Boot ::                (v3.3.5)
-
-2025-07-08T02:36:46.256Z  INFO 35458 --- [vg-ms-family] [           main] p.e.v.d.controller.FamilyControllerTest  : Starting FamilyControllerTest using Java 17.0.11 with PID 35458 (started by codespace in /workspaces/vg-ms-project)
-2025-07-08T02:36:46.257Z  INFO 35458 --- [vg-ms-family] [           main] p.e.v.d.controller.FamilyControllerTest  : No active profile set, falling back to 1 default profile: "default"
-2025-07-08T02:36:46.630Z  INFO 35458 --- [vg-ms-family] [           main] p.e.v.d.controller.FamilyControllerTest  : Started FamilyControllerTest in 0.462 seconds (process running for 17.063)
-]]></system-out>
-  </testcase>
-  <testcase name="getFamilyById_ExistingFamily_ShouldReturnFamily" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.072"/>
-  <testcase name="getAllActiveFamilies_ShouldReturnActiveFamilies" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.059"/>
-  <testcase name="updateFamily_ExistingFamily_ShouldUpdateFamily" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.023"/>
-  <testcase name="getAllInactiveFamilies_ShouldReturnInactiveFamilies" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.015"/>
-  <testcase name="createFamily_ServiceError_ShouldReturnBadRequest" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.014">
-    <system-out><![CDATA[2025-07-08T02:36:46.911Z ERROR 35458 --- [vg-ms-family] [     parallel-1] p.e.v.d.controller.FamilyController      : Error creating family
-
-java.lang.RuntimeException: Creation error
-	at pe.edu.vallegrande.database.controller.FamilyControllerTest.createFamily_ServiceError_ShouldReturnBadRequest(FamilyControllerTest.java:216) ~[test-classes/:na]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
-	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:728) ~[junit-platform-commons-1.10.5.jar:1.10.5]
-	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:218) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:214) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:139) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69) ~[junit-jupiter-engine-5.10.5.jar:5.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47) ~[junit-platform-launcher-1.10.5.jar:1.10.5]
-	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56) ~[surefire-junit-platform-3.2.5.jar:3.2.5]
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184) ~[surefire-junit-platform-3.2.5.jar:3.2.5]
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148) ~[surefire-junit-platform-3.2.5.jar:3.2.5]
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122) ~[surefire-junit-platform-3.2.5.jar:3.2.5]
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385) ~[surefire-booter-3.2.5.jar:3.2.5]
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162) ~[surefire-booter-3.2.5.jar:3.2.5]
-	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507) ~[surefire-booter-3.2.5.jar:3.2.5]
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495) ~[surefire-booter-3.2.5.jar:3.2.5]
-
-]]></system-out>
-  </testcase>
-  <testcase name="getFamilyById_NonExistingFamily_ShouldReturn404" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.013"/>
-  <testcase name="activeFamily_ExistingFamily_ShouldActivateFamily" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.011"/>
-  <testcase name="getFamilyDetailById_ExistingFamily_ShouldReturnFamilyDetails" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.021"/>
-  <testcase name="createFamily_ValidData_ShouldCreateFamily" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.019"/>
-  <testcase name="deleteFamily_NonExistingFamily_ShouldReturn404" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.021">
-    <system-out><![CDATA[2025-07-08T02:36:47.007Z  WARN 35458 --- [vg-ms-family] [     parallel-1] p.e.v.d.controller.FamilyController      : Family not found: Family not found
-]]></system-out>
-  </testcase>
-  <testcase name="activeFamily_NonExistingFamily_ShouldReturn404" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.012">
-    <system-out><![CDATA[2025-07-08T02:36:47.026Z  WARN 35458 --- [vg-ms-family] [     parallel-1] p.e.v.d.controller.FamilyController      : Family not found: Family not found
-]]></system-out>
-  </testcase>
-  <testcase name="deleteFamily_ExistingFamily_ShouldDeleteFamily" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.01"/>
-  <testcase name="getAllActiveFamilies_WhenNoActiveFamilies_ShouldReturnEmptyList" classname="pe.edu.vallegrande.database.controller.FamilyControllerTest" time="0.009"/>
+  <testcase name="testToEntity_WithValidFamilyDTO_ShouldReturnFamily" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.056"/>
+  <testcase name="testToDTO_WithFamilyWithNullValues_ShouldReturnDTOWithNullValues" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.005"/>
+  <testcase name="testCompleteWorkflow_ToEntityAndToDTO_ShouldMaintainDataIntegrity" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.005"/>
+  <testcase name="testToDTO_WithValidFamily_ShouldReturnFamilyDTO" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.005"/>
+  <testcase name="testToEntity_WithNullFamilyDTO_ShouldReturnNull" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.005"/>
+  <testcase name="testUpdateEntityFromDTO_WithValidData_ShouldUpdateEntity" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.005"/>
+  <testcase name="testUpdateEntityFromDTO_WithNullDTO_ShouldDoNothing" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.007"/>
+  <testcase name="testUpdateEntityFromDTO_WithDTOWithNullValues_ShouldUpdateWithNullValues" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.006"/>
+  <testcase name="testUpdateEntityFromDTO_WithBothNull_ShouldDoNothing" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.011"/>
+  <testcase name="testUpdateEntityFromDTO_WithNullFamily_ShouldDoNothing" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.006"/>
+  <testcase name="testToDTO_WithNullFamily_ShouldReturnNull" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.004"/>
+  <testcase name="testToEntity_WithFamilyDTOWithNullValues_ShouldReturnFamilyWithNullValues" classname="pe.edu.vallegrande.database.service.FamilyMapperTest" time="0.005"/>
 </testsuite>

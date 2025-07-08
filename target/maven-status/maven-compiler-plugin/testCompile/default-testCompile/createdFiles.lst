@@ -1,6 +1,9 @@
+pe/edu/vallegrande/database/service/AdmissionReasonServiceTest.class
 pe/edu/vallegrande/database/controller/FamilyControllerTest.class
 pe/edu/vallegrande/database/service/FamilyServiceTest.class
 pe/edu/vallegrande/database/config/JwtConverterConfigTest.class
 pe/edu/vallegrande/database/DatabaseApplicationTests.class
 pe/edu/vallegrande/database/config/SecurityConfigTest.class
 pe/edu/vallegrande/database/security/TestSecurityConfig.class
+pe/edu/vallegrande/database/service/FamilyMapperTest.class
+pe/edu/vallegrande/database/controller/AdmissionReasonControllerTest.class

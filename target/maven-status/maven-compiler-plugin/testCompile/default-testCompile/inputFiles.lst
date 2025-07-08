@@ -1,6 +1,9 @@
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/DatabaseApplicationTests.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/JwtConverterConfigTest.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/SecurityConfigTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/controller/AdmissionReasonControllerTest.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/controller/FamilyControllerTest.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/security/TestSecurityConfig.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/service/AdmissionReasonServiceTest.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/service/FamilyMapperTest.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/service/FamilyServiceTest.java

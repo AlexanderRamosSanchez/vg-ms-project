@@ -17,7 +17,7 @@ class SecurityConfigTest {
     private ReactiveJwtAuthenticationConverter jwtAuthenticationConverter;
 
     @Test
-    @DisplayName("Should create SecurityConfig with JWT converter")
+    @DisplayName("Debería crear SecurityConfig con el convertidor JWT")
     void shouldCreateSecurityConfigWithJwtConverter() {
         // Given & When
         SecurityConfig config = new SecurityConfig(jwtAuthenticationConverter);
@@ -27,7 +27,7 @@ class SecurityConfigTest {
     }
 
     @Test
-    @DisplayName("Should handle null JWT converter gracefully")
+    @DisplayName("Debería manejar el convertidor JWT nulo con elegancia")
     void shouldHandleNullJwtConverterGracefully() {
         // Given & When
         SecurityConfig config = new SecurityConfig(null);

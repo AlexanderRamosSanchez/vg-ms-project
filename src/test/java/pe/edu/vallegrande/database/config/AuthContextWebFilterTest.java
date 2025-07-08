@@ -38,7 +38,7 @@ class AuthContextWebFilterTest {
     }
 
     @Test
-    @DisplayName("Should create JWT token propagation filter")
+    @DisplayName("Se debe crear un filtro de propagación de tokens JWT")
     void shouldCreateJwtTokenPropagationFilter() {
         // When
         WebFilter filter = authContextWebFilter.jwtTokenPropagationFilter();
@@ -48,7 +48,7 @@ class AuthContextWebFilterTest {
     }
 
     @Test
-    @DisplayName("Should propagate JWT token when Authorization header is present")
+    @DisplayName("Debe propagar el token JWT cuando el encabezado de autorización esté presente")
     void shouldPropagateJwtTokenWhenAuthorizationHeaderIsPresent() {
         // Given
         when(filterChain.filter(any(ServerWebExchange.class))).thenReturn(Mono.empty());
@@ -70,7 +70,7 @@ class AuthContextWebFilterTest {
     }
 
     @Test
-    @DisplayName("Should continue without token when Authorization header is missing")
+    @DisplayName("Debe continuar sin token cuando falta el encabezado de autorización")
     void shouldContinueWithoutTokenWhenAuthorizationHeaderIsMissing() {
         // Given
         when(filterChain.filter(any(ServerWebExchange.class))).thenReturn(Mono.empty());
@@ -90,7 +90,7 @@ class AuthContextWebFilterTest {
     }
 
     @Test
-    @DisplayName("Should continue without token when Authorization header does not start with Bearer")
+    @DisplayName("Debe continuar sin token cuando el encabezado de autorización no comienza con Bearer")
     void shouldContinueWithoutTokenWhenAuthorizationHeaderDoesNotStartWithBearer() {
         // Given
         when(filterChain.filter(any(ServerWebExchange.class))).thenReturn(Mono.empty());
@@ -112,7 +112,7 @@ class AuthContextWebFilterTest {
     }
 
     @Test
-    @DisplayName("Should handle empty Bearer token")
+    @DisplayName("Debe manejar el token de portador vacío")
     void shouldHandleEmptyBearerToken() {
         // Given
         when(filterChain.filter(any(ServerWebExchange.class))).thenReturn(Mono.empty());

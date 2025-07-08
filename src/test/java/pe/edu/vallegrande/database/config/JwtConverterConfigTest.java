@@ -28,7 +28,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should create JWT authentication converter")
+    @DisplayName("Debería crear un convertidor de autenticación JWT")
     void shouldCreateJwtAuthenticationConverter() {
         // When
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();
@@ -38,7 +38,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should convert JWT with ADMIN role to authentication token")
+    @DisplayName("Debe convertir JWT con rol ADMIN en token de autenticación")
     void shouldConvertJwtWithAdminRoleToAuthenticationToken() {
         // Given
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();
@@ -63,7 +63,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should convert JWT with USER role to authentication token")
+    @DisplayName("Debe convertir JWT con rol de USUARIO en token de autenticación")
     void shouldConvertJwtWithUserRoleToAuthenticationToken() {
         // Given
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();
@@ -88,7 +88,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should create token with no authorities when JWT has no role claim")
+    @DisplayName("Se debe crear un token sin autoridad cuando JWT no tiene reclamo de rol")
     void shouldCreateTokenWithNoAuthoritiesWhenJwtHasNoRoleClaim() {
         // Given
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();
@@ -111,7 +111,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should create token with no authorities when JWT has empty role claim")
+    @DisplayName("Se debe crear un token sin autoridad cuando JWT tiene un reclamo de rol vacío")
     void shouldCreateTokenWithNoAuthoritiesWhenJwtHasEmptyRoleClaim() {
         // Given
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();
@@ -135,7 +135,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should create token with no authorities when JWT has whitespace-only role claim")
+    @DisplayName("Se debe crear un token sin autoridad cuando JWT tiene un reclamo de rol de solo espacios en blanco")
     void shouldCreateTokenWithNoAuthoritiesWhenJwtHasWhitespaceOnlyRoleClaim() {
         // Given
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();
@@ -159,7 +159,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should handle JWT with multiple claims correctly")
+    @DisplayName("Debería gestionar JWT con múltiples reclamaciones correctamente")
     void shouldHandleJwtWithMultipleClaimsCorrectly() {
         // Given
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();
@@ -186,7 +186,7 @@ class JwtConverterConfigTest {
     }
 
     @Test
-    @DisplayName("Should handle special characters in role claim")
+    @DisplayName("Debe manejar caracteres especiales en la reclamación de roles")
     void shouldHandleSpecialCharactersInRoleClaim() {
         // Given
         ReactiveJwtAuthenticationConverter converter = jwtConverterConfig.jwtAuthenticationConverter();

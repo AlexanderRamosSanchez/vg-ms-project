@@ -112,6 +112,78 @@ class FamilyServiceTest {
     }
 
     @Test
+    @DisplayName("Debe mapear con solo serviceId presente")
+    void mapToFamilyDTO_WithOnlyServiceId_ShouldMapPartially() {
+        // Given
+        testFamily.setHousingId(null);
+        testFamily.setReasibAdmission(null);
+        
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(housingServiceClient.getBasicServiceById(testFamily.getServiceId()))
+                .thenReturn(Mono.just(testBasicService));
+
+        // When & Then
+        StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
+                .expectNextMatches(dto -> 
+                    dto.getBasicService() != null && 
+                    dto.getHousingDetails() == null
+                )
+                .verifyComplete();
+
+        verify(admissionReasonService, never()).getReasonTextById(any());
+        verify(housingServiceClient).getBasicServiceById(testFamily.getServiceId());
+        verify(housingServiceClient, never()).getHousingDetailsById(any());
+    }
+
+    @Test
+    @DisplayName("Debe mapear con solo housingId presente")
+    void mapToFamilyDTO_WithOnlyHousingId_ShouldMapPartially() {
+        // Given
+        testFamily.setServiceId(null);
+        testFamily.setReasibAdmission(null);
+        
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(housingServiceClient.getHousingDetailsById(testFamily.getHousingId()))
+                .thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
+                .expectNextMatches(dto -> 
+                    dto.getBasicService() == null && 
+                    dto.getHousingDetails() != null
+                )
+                .verifyComplete();
+
+        verify(admissionReasonService, never()).getReasonTextById(any());
+        verify(housingServiceClient, never()).getBasicServiceById(any());
+        verify(housingServiceClient).getHousingDetailsById(testFamily.getHousingId());
+    }
+
+    @Test
+    @DisplayName("Debe mapear con solo reasonAdmission presente")
+    void mapToFamilyDTO_WithOnlyReasonAdmission_ShouldMapPartially() {
+        // Given
+        testFamily.setServiceId(null);
+        testFamily.setHousingId(null);
+        
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(testFamily.getReasibAdmission()))
+                .thenReturn(Mono.just("Razón de admisión"));
+
+        // When & Then
+        StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
+                .expectNextMatches(dto -> 
+                    dto.getBasicService() == null && 
+                    dto.getHousingDetails() == null
+                )
+                .verifyComplete();
+
+        verify(admissionReasonService).getReasonTextById(testFamily.getReasibAdmission());
+        verify(housingServiceClient, never()).getBasicServiceById(any());
+        verify(housingServiceClient, never()).getHousingDetailsById(any());
+    }
+
+    @Test
     @DisplayName("Debe manejar errores en servicios externos y continuar")
     void mapToFamilyDTO_WithServiceErrors_ShouldHandleGracefully() {
         // Given
@@ -126,6 +198,48 @@ class FamilyServiceTest {
         // When & Then
         StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
                 .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error solo en basicService")
+    void mapToFamilyDTO_WithBasicServiceError_ShouldHandleGracefully() {
+        // Given
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(testFamily.getReasibAdmission()))
+                .thenReturn(Mono.just("Razón de admisión"));
+        when(housingServiceClient.getBasicServiceById(testFamily.getServiceId()))
+                .thenReturn(Mono.error(new RuntimeException("Service error")));
+        when(housingServiceClient.getHousingDetailsById(testFamily.getHousingId()))
+                .thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
+                .expectNextMatches(dto -> 
+                    dto.getId().equals(testFamily.getId()) &&
+                    dto.getHousingDetails() != null
+                )
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error solo en housingDetails")
+    void mapToFamilyDTO_WithHousingDetailsError_ShouldHandleGracefully() {
+        // Given
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(testFamily.getReasibAdmission()))
+                .thenReturn(Mono.just("Razón de admisión"));
+        when(housingServiceClient.getBasicServiceById(testFamily.getServiceId()))
+                .thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(testFamily.getHousingId()))
+                .thenReturn(Mono.error(new RuntimeException("Service error")));
+
+        // When & Then
+        StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
+                .expectNextMatches(dto -> 
+                    dto.getId().equals(testFamily.getId()) &&
+                    dto.getBasicService() != null
+                )
                 .verifyComplete();
     }
 
@@ -155,6 +269,19 @@ class FamilyServiceTest {
     }
 
     @Test
+    @DisplayName("Debe retornar flujo vacío cuando no hay familias activas")
+    void findAllActive_NoActiveFamilies_ShouldReturnEmptyFlux() {
+        // Given
+        when(familyRepository.findAllByStatus("A")).thenReturn(Flux.empty());
+
+        // When & Then
+        StepVerifier.create(familyService.findAllActive())
+                .verifyComplete();
+
+        verify(familyRepository).findAllByStatus("A");
+    }
+
+    @Test
     @DisplayName("Debe obtener todas las familias inactivas")
     void findAllInactive_ShouldReturnInactiveFamilies() {
         // Given
@@ -167,6 +294,19 @@ class FamilyServiceTest {
         // When & Then
         StepVerifier.create(familyService.findAllInactive())
                 .expectNext(testFamilyDTO)
+                .verifyComplete();
+
+        verify(familyRepository).findAllByStatus("I");
+    }
+
+    @Test
+    @DisplayName("Debe retornar flujo vacío cuando no hay familias inactivas")
+    void findAllInactive_NoInactiveFamilies_ShouldReturnEmptyFlux() {
+        // Given
+        when(familyRepository.findAllByStatus("I")).thenReturn(Flux.empty());
+
+        // When & Then
+        StepVerifier.create(familyService.findAllInactive())
                 .verifyComplete();
 
         verify(familyRepository).findAllByStatus("I");
@@ -206,8 +346,8 @@ class FamilyServiceTest {
     // ======================== PRUEBAS DE CREACIÓN ========================
 
     @Test
-    @DisplayName("Debe crear familia exitosamente con servicios")
-    void createFamily_WithServices_ShouldCreateSuccessfully() {
+    @DisplayName("Debe crear familia exitosamente con todos los servicios")
+    void createFamily_WithAllServices_ShouldCreateSuccessfully() {
         // Given
         testFamilyDTO.setReasibAdmission(1);
         testFamilyDTO.setBasicService(testBasicService);
@@ -244,11 +384,27 @@ class FamilyServiceTest {
                 .verify();
     }
 
+    @Test
+    @DisplayName("Debe manejar error al crear basicService")
+    void createFamily_WithBasicServiceError_ShouldFail() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setBasicService(testBasicService);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(housingServiceClient.createBasicService(any())).thenReturn(Mono.error(new RuntimeException("Service error")));
+
+        // When & Then
+        StepVerifier.create(familyService.createFamily(testFamilyDTO))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
     // ======================== PRUEBAS DE ACTUALIZACIÓN ========================
 
     @Test
-    @DisplayName("Debe actualizar familia exitosamente")
-    void updateFamily_ExistingFamily_ShouldUpdateSuccessfully() {
+    @DisplayName("Debe actualizar familia exitosamente con todos los servicios")
+    void updateFamily_WithAllServices_ShouldUpdateSuccessfully() {
         // Given
         testFamilyDTO.setReasibAdmission(1);
         testFamilyDTO.setBasicService(testBasicService);
@@ -269,6 +425,134 @@ class FamilyServiceTest {
                 .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
                 .verifyComplete();
 
+        verify(familyEventService).publishFamilyEvent(any(Family.class), eq("UPDATED"));
+    }
+
+    @Test
+    @DisplayName("Debe actualizar familia sin servicios adicionales")
+    void updateFamily_WithoutServices_ShouldUpdateSuccessfully() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setBasicService(null);
+        testFamilyDTO.setHousingDetails(null);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.just(testFamily));
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(1, testFamilyDTO))
+                .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
+                .verifyComplete();
+
+        verify(housingServiceClient, never()).updateBasicService(any(), any());
+        verify(housingServiceClient, never()).updateHousingDetails(any(), any());
+        verify(familyEventService).publishFamilyEvent(any(Family.class), eq("UPDATED"));
+    }
+
+    @Test
+    @DisplayName("Debe fallar al actualizar familia inexistente")
+    void updateFamily_NonExistingFamily_ShouldFail() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(999)).thenReturn(Mono.empty());
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(999, testFamilyDTO))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error al actualizar basicService")
+    void updateFamily_WithBasicServiceError_ShouldFail() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setBasicService(testBasicService);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(housingServiceClient.updateBasicService(any(), any())).thenReturn(Mono.error(new RuntimeException("Service error")));
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(1, testFamilyDTO))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error al actualizar housingDetails")
+    void updateFamily_WithHousingDetailsError_ShouldFail() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setHousingDetails(testHousingDetails);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(housingServiceClient.updateHousingDetails(any(), any())).thenReturn(Mono.error(new RuntimeException("Service error")));
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(1, testFamilyDTO))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe actualizar solo con basicService")
+    void updateFamily_WithOnlyBasicService_ShouldUpdateSuccessfully() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setBasicService(testBasicService);
+        testFamilyDTO.setHousingDetails(null);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(housingServiceClient.updateBasicService(any(), any())).thenReturn(Mono.just(testBasicService));
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.just(testFamily));
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(1, testFamilyDTO))
+                .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
+                .verifyComplete();
+
+        verify(housingServiceClient).updateBasicService(any(), any());
+        verify(housingServiceClient, never()).updateHousingDetails(any(), any());
+        verify(familyEventService).publishFamilyEvent(any(Family.class), eq("UPDATED"));
+    }
+
+    @Test
+    @DisplayName("Debe actualizar solo con housingDetails")
+    void updateFamily_WithOnlyHousingDetails_ShouldUpdateSuccessfully() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setBasicService(null);
+        testFamilyDTO.setHousingDetails(testHousingDetails);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(housingServiceClient.updateHousingDetails(any(), any())).thenReturn(Mono.just(testHousingDetails));
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.just(testFamily));
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(1, testFamilyDTO))
+                .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
+                .verifyComplete();
+
+        verify(housingServiceClient, never()).updateBasicService(any(), any());
+        verify(housingServiceClient).updateHousingDetails(any(), any());
         verify(familyEventService).publishFamilyEvent(any(Family.class), eq("UPDATED"));
     }
 
@@ -304,8 +588,8 @@ class FamilyServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción al cambiar status de familia inexistente")
-    void changeStatus_NonExistingFamily_ShouldThrowException() {
+    @DisplayName("Debe lanzar excepción al eliminar familia inexistente")
+    void deleteFamily_NonExistingFamily_ShouldThrowException() {
         // Given
         when(familyRepository.findById(999)).thenReturn(Mono.empty());
 
@@ -316,8 +600,47 @@ class FamilyServiceTest {
     }
 
     @Test
-    @DisplayName("Debe obtener detalles de familia")
-    void findDetailById_ShouldReturnFamilyDetails() {
+    @DisplayName("Debe lanzar excepción al activar familia inexistente")
+    void activeFamily_NonExistingFamily_ShouldThrowException() {
+        // Given
+        when(familyRepository.findById(999)).thenReturn(Mono.empty());
+
+        // When & Then
+        StepVerifier.create(familyService.activeFamily(999))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error al guardar durante eliminación")
+    void deleteFamily_SaveError_ShouldPropagateError() {
+        // Given
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.error(new RuntimeException("Save error")));
+
+        // When & Then
+        StepVerifier.create(familyService.deleteFamily(1))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error al guardar durante activación")
+    void activeFamily_SaveError_ShouldPropagateError() {
+        // Given
+        testFamily.setStatus("I");
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.error(new RuntimeException("Save error")));
+
+        // When & Then
+        StepVerifier.create(familyService.activeFamily(1))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe obtener detalles de familia existente")
+    void findDetailById_ExistingFamily_ShouldReturnFamilyDetails() {
         // Given
         when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
         when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
@@ -329,6 +652,137 @@ class FamilyServiceTest {
         StepVerifier.create(familyService.findDetailById(1))
                 .expectNext(testFamilyDTO)
                 .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Debe completar vacío al buscar detalles de familia inexistente")
+    void findDetailById_NonExistingFamily_ShouldCompleteEmpty() {
+        // Given
+        when(familyRepository.findById(999)).thenReturn(Mono.empty());
+
+        // When & Then
+        StepVerifier.create(familyService.findDetailById(999))
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error en repositorio durante búsqueda de detalles")
+    void findDetailById_RepositoryError_ShouldPropagateError() {
+        // Given
+        when(familyRepository.findById(1)).thenReturn(Mono.error(new RuntimeException("Repository error")));
+
+        // When & Then
+        StepVerifier.create(familyService.findDetailById(1))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    // ======================== PRUEBAS ADICIONALES PARA COBERTURA ========================
+
+    @Test
+    @DisplayName("Debe manejar error en repositorio durante findAllActive")
+    void findAllActive_RepositoryError_ShouldPropagateError() {
+        // Given
+        when(familyRepository.findAllByStatus("A")).thenReturn(Flux.error(new RuntimeException("Repository error")));
+
+        // When & Then
+        StepVerifier.create(familyService.findAllActive())
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error en repositorio durante findAllInactive")
+    void findAllInactive_RepositoryError_ShouldPropagateError() {
+        // Given
+        when(familyRepository.findAllByStatus("I")).thenReturn(Flux.error(new RuntimeException("Repository error")));
+
+        // When & Then
+        StepVerifier.create(familyService.findAllInactive())
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error en repositorio durante findById")
+    void findById_RepositoryError_ShouldPropagateError() {
+        // Given
+        when(familyRepository.findById(1)).thenReturn(Mono.error(new RuntimeException("Repository error")));
+
+        // When & Then
+        StepVerifier.create(familyService.findById(1))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar error en repositorio durante save en updateFamily")
+    void updateFamily_RepositorySaveError_ShouldPropagateError() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.error(new RuntimeException("Repository error")));
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(1, testFamilyDTO))
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Debe manejar solo error en reasonService")
+    void mapToFamilyDTO_WithOnlyReasonServiceError_ShouldHandleGracefully() {
+        // Given
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(testFamily.getReasibAdmission()))
+                .thenReturn(Mono.error(new RuntimeException("Service error")));
+        when(housingServiceClient.getBasicServiceById(testFamily.getServiceId()))
+                .thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(testFamily.getHousingId()))
+                .thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
+                .expectNextMatches(dto -> 
+                    dto.getId().equals(testFamily.getId()) &&
+                    dto.getBasicService() != null &&
+                    dto.getHousingDetails() != null
+                )
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Debe validar que el status se actualice correctamente en deleteFamily")
+    void deleteFamily_ShouldUpdateStatusToInactive() {
+        // Given
+        testFamily.setStatus("A");
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(familyRepository.save(argThat(family -> "I".equals(family.getStatus()))))
+                .thenReturn(Mono.just(testFamily));
+
+        // When & Then
+        StepVerifier.create(familyService.deleteFamily(1))
+                .verifyComplete();
+
+        verify(familyRepository).save(argThat(family -> "I".equals(family.getStatus())));
+    }
+
+    @Test
+    @DisplayName("Debe validar que el status se actualice correctamente en activeFamily")
+    void activeFamily_ShouldUpdateStatusToActive() {
+        // Given
+        testFamily.setStatus("I");
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(familyRepository.save(argThat(family -> "A".equals(family.getStatus()))))
+                .thenReturn(Mono.just(testFamily));
+
+        // When & Then
+        StepVerifier.create(familyService.activeFamily(1))
+                .verifyComplete();
+
+        verify(familyRepository).save(argThat(family -> "A".equals(family.getStatus())));
     }
 
     // ======================== MÉTODOS AUXILIARES ========================

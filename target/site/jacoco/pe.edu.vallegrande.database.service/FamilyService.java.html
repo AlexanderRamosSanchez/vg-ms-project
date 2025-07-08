@@ -160,10 +160,10 @@ public class FamilyService {
                 })
 <span class="fc" id="L161">                .onErrorResume(e -&gt; {</span>
 <span class="fc" id="L162">                    logger.error(&quot;Error creating family&quot;, e);</span>
-<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                    if (e instanceof IllegalArgumentException) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                    if (e instanceof IllegalArgumentException) {</span>
 <span class="fc" id="L164">                        return Mono.error(e);</span>
                     }
-<span class="nc" id="L166">                    return Mono.error(new RuntimeException(&quot;Error durante la creación de la familia: &quot; + e.getMessage()));</span>
+<span class="fc" id="L166">                    return Mono.error(new RuntimeException(&quot;Error durante la creación de la familia: &quot; + e.getMessage()));</span>
                 });
     }
 
@@ -197,11 +197,11 @@ public class FamilyService {
                 })
 <span class="fc" id="L198">                .flatMap(this::mapToFamilyDTO)</span>
 <span class="fc" id="L199">                .onErrorResume(e -&gt; {</span>
-<span class="nc" id="L200">                    logger.error(&quot;Error updating family&quot;, e);</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">                    if (e instanceof IllegalArgumentException) {</span>
-<span class="nc" id="L202">                        return Mono.error(e);</span>
+<span class="fc" id="L200">                    logger.error(&quot;Error updating family&quot;, e);</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">                    if (e instanceof IllegalArgumentException) {</span>
+<span class="fc" id="L202">                        return Mono.error(e);</span>
                     }
-<span class="nc" id="L204">                    return Mono.error(new RuntimeException(&quot;Error durante la actualización de la familia: &quot; + e.getMessage()));</span>
+<span class="fc" id="L204">                    return Mono.error(new RuntimeException(&quot;Error durante la actualización de la familia: &quot; + e.getMessage()));</span>
                 });
     }
 
@@ -259,16 +259,16 @@ public class FamilyService {
     }
 
     private Mono&lt;BasicServiceDTO&gt; updateBasicServiceInOtherService(Family family, FamilyDTO familyDTO) {
-<span class="pc bpc" id="L262" title="2 of 4 branches missed.">        if (family.getServiceId() != null &amp;&amp; familyDTO.getBasicService() != null) {</span>
+<span class="pc bpc" id="L262" title="1 of 4 branches missed.">        if (family.getServiceId() != null &amp;&amp; familyDTO.getBasicService() != null) {</span>
 <span class="fc" id="L263">            return housingServiceClient.updateBasicService(family.getServiceId(), familyDTO.getBasicService());</span>
         }
-<span class="nc" id="L265">        return Mono.empty();</span>
+<span class="fc" id="L265">        return Mono.empty();</span>
     }
 
     private Mono&lt;HousingDetailsDTO&gt; updateHousingDetailsInOtherService(Family family, FamilyDTO familyDTO) {
-<span class="pc bpc" id="L269" title="2 of 4 branches missed.">        if (family.getHousingId() != null &amp;&amp; familyDTO.getHousingDetails() != null) {</span>
+<span class="pc bpc" id="L269" title="1 of 4 branches missed.">        if (family.getHousingId() != null &amp;&amp; familyDTO.getHousingDetails() != null) {</span>
 <span class="fc" id="L270">            return housingServiceClient.updateHousingDetails(family.getHousingId(), familyDTO.getHousingDetails());</span>
-<span class="nc bnc" id="L271" title="All 2 branches missed.">        } else if (familyDTO.getHousingDetails() != null) {</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">        } else if (familyDTO.getHousingDetails() != null) {</span>
             // Si la familia no tiene un housingId pero se proporciona HousingDetails, crea uno nuevo
 <span class="nc" id="L273">            return housingServiceClient.createHousingDetails(familyDTO.getHousingDetails())</span>
 <span class="nc" id="L274">                    .doOnSuccess(savedHousing -&gt; {</span>
@@ -277,7 +277,7 @@ public class FamilyService {
                         }
 <span class="nc" id="L278">                    });</span>
         }
-<span class="nc" id="L280">        return Mono.empty();</span>
+<span class="fc" id="L280">        return Mono.empty();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

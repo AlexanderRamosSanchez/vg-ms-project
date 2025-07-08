@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("AdmissionReasonService Tests")
+@DisplayName("Pruebas de AdmissionReasonService")
 class AdmissionReasonServiceTest {
 
     @Mock
@@ -33,7 +33,7 @@ class AdmissionReasonServiceTest {
     private AdmissionReasonDTO admissionReasonDTO;
 
     @BeforeEach
-    @DisplayName("Setup test data")
+    @DisplayName("Configurar datos de prueba")
     void setUp() {
         // Setup AdmissionReason entities
         admissionReason1 = new AdmissionReason();
@@ -51,7 +51,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("findAll should return all admission reasons as DTOs")
+    @DisplayName("findAll debería retornar todas las razones de admisión como DTOs")
     void testFindAll_ShouldReturnAllAdmissionReasonsAsDTO() {
         // Given
         when(admissionReasonRepository.findAll())
@@ -71,7 +71,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("findAll should return empty flux when no admission reasons exist")
+    @DisplayName("findAll debería retornar flux vacío cuando no existen razones de admisión")
     void testFindAll_WithNoData_ShouldReturnEmptyFlux() {
         // Given
         when(admissionReasonRepository.findAll())
@@ -85,7 +85,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("findAll should handle repository error")
+    @DisplayName("findAll debería manejar errores del repositorio")
     void testFindAll_WithRepositoryError_ShouldPropagateError() {
         // Given
         RuntimeException repositoryError = new RuntimeException("Database connection failed");
@@ -101,7 +101,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("findById should return admission reason DTO when found")
+    @DisplayName("findById debería retornar DTO de razón de admisión cuando se encuentra")
     void testFindById_WithExistingId_ShouldReturnAdmissionReasonDTO() {
         // Given
         Integer id = 1;
@@ -119,7 +119,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("findById should handle repository error")
+    @DisplayName("findById debería manejar errores del repositorio")
     void testFindById_WithRepositoryError_ShouldPropagateError() {
         // Given
         Integer id = 1;
@@ -136,7 +136,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("getReasonTextById should return reason text when found")
+    @DisplayName("getReasonTextById debería retornar texto de razón cuando se encuentra")
     void testGetReasonTextById_WithExistingId_ShouldReturnReasonText() {
         // Given
         Integer id = 1;
@@ -152,7 +152,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("getReasonTextById should return empty mono when admission reason not found")
+    @DisplayName("getReasonTextById debería retornar mono vacío cuando no se encuentra la razón de admisión")
     void testGetReasonTextById_WithNonExistingId_ShouldReturnEmptyMono() {
         // Given
         Integer id = 999;
@@ -167,7 +167,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("create should create new admission reason successfully")
+    @DisplayName("create debería crear nueva razón de admisión exitosamente")
     void testCreate_WithValidDTO_ShouldCreateAdmissionReason() {
         // Given
         AdmissionReasonDTO inputDTO = new AdmissionReasonDTO();
@@ -191,7 +191,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("create should handle repository error during save")
+    @DisplayName("create debería manejar errores del repositorio durante el guardado")
     void testCreate_WithRepositoryError_ShouldPropagateError() {
         // Given
         AdmissionReasonDTO inputDTO = new AdmissionReasonDTO();
@@ -210,7 +210,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("create should verify that saved entity has correct data")
+    @DisplayName("create debería verificar que la entidad guardada tiene los datos correctos")
     void testCreate_ShouldVerifyEntityDataBeforeSave() {
         // Given
         AdmissionReasonDTO inputDTO = new AdmissionReasonDTO();
@@ -239,7 +239,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("mapToDTO should handle admission reason with null values")
+    @DisplayName("mapToDTO debería manejar razón de admisión con valores null")
     void testMapToDTO_WithNullValues_ShouldHandleNullValues() {
         // Given
         AdmissionReason admissionReasonWithNulls = new AdmissionReason();
@@ -258,7 +258,7 @@ class AdmissionReasonServiceTest {
     }
 
     @Test
-    @DisplayName("Service should handle multiple consecutive operations")
+    @DisplayName("El servicio debería manejar múltiples operaciones consecutivas")
     void testMultipleOperations_ShouldWorkCorrectly() {
         // Given
         when(admissionReasonRepository.findAll())

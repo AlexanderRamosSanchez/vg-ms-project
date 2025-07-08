@@ -1,5 +1,5 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-database,pe.edu.vallegrande.database.service,FamilyService,60,471,19,21,13,114,18,37,3,32
+database,pe.edu.vallegrande.database.service,FamilyService,27,504,13,27,5,122,13,42,2,33
 database,pe.edu.vallegrande.database.service,FamilyMapper,0,165,0,8,0,46,0,8,0,4
 database,pe.edu.vallegrande.database.service,AdmissionReasonService,0,58,0,0,0,17,0,6,0,6
 database,pe.edu.vallegrande.database.config,SecurityConfig,21,114,0,0,6,18,1,6,1,6

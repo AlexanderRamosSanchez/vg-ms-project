@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("FamilyMapper Tests")
+@DisplayName("Pruebas de FamilyMapper")
 class FamilyMapperTest {
 
     @InjectMocks
@@ -25,7 +25,7 @@ class FamilyMapperTest {
     private LocalDateTime testDateTime;
 
     @BeforeEach
-    @DisplayName("Setup test data")
+    @DisplayName("Configurar datos de prueba")
     void setUp() {
         testDateTime = LocalDateTime.now();
         
@@ -73,7 +73,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("toDTO should convert Family entity to FamilyDTO successfully")
+    @DisplayName("toDTO debería convertir la entidad Family a FamilyDTO exitosamente")
     void testToDTO_WithValidFamily_ShouldReturnFamilyDTO() {
         // When
         FamilyDTO result = familyMapper.toDTO(family);
@@ -101,7 +101,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("toDTO should return null when Family entity is null")
+    @DisplayName("toDTO debería retornar null cuando la entidad Family es null")
     void testToDTO_WithNullFamily_ShouldReturnNull() {
         // When
         FamilyDTO result = familyMapper.toDTO(null);
@@ -111,7 +111,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("toDTO should handle Family entity with null values")
+    @DisplayName("toDTO debería manejar la entidad Family con valores null")
     void testToDTO_WithFamilyWithNullValues_ShouldReturnDTOWithNullValues() {
         // Given
         Family emptyFamily = new Family();
@@ -143,7 +143,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("toEntity should convert FamilyDTO to Family entity successfully")
+    @DisplayName("toEntity debería convertir FamilyDTO a la entidad Family exitosamente")
     void testToEntity_WithValidFamilyDTO_ShouldReturnFamily() {
         // When
         Family result = familyMapper.toEntity(familyDTO);
@@ -172,7 +172,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("toEntity should return null when FamilyDTO is null")
+    @DisplayName("toEntity debería retornar null cuando FamilyDTO es null")
     void testToEntity_WithNullFamilyDTO_ShouldReturnNull() {
         // When
         Family result = familyMapper.toEntity(null);
@@ -182,7 +182,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("toEntity should handle FamilyDTO with null values")
+    @DisplayName("toEntity debería manejar FamilyDTO con valores null")
     void testToEntity_WithFamilyDTOWithNullValues_ShouldReturnFamilyWithNullValues() {
         // Given
         FamilyDTO emptyDTO = new FamilyDTO();
@@ -213,7 +213,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("updateEntityFromDTO should update Family entity with FamilyDTO data")
+    @DisplayName("updateEntityFromDTO debería actualizar la entidad Family con datos de FamilyDTO")
     void testUpdateEntityFromDTO_WithValidData_ShouldUpdateEntity() {
         // Given
         Family existingFamily = new Family();
@@ -250,7 +250,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("updateEntityFromDTO should do nothing when Family entity is null")
+    @DisplayName("updateEntityFromDTO no debería hacer nada cuando la entidad Family es null")
     void testUpdateEntityFromDTO_WithNullFamily_ShouldDoNothing() {
         // Given
         Family nullFamily = null;
@@ -260,7 +260,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("updateEntityFromDTO should do nothing when FamilyDTO is null")
+    @DisplayName("updateEntityFromDTO no debería hacer nada cuando FamilyDTO es null")
     void testUpdateEntityFromDTO_WithNullDTO_ShouldDoNothing() {
         // Given
         Family existingFamily = new Family();
@@ -276,14 +276,14 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("updateEntityFromDTO should do nothing when both parameters are null")
+    @DisplayName("updateEntityFromDTO no debería hacer nada cuando ambos parámetros son null")
     void testUpdateEntityFromDTO_WithBothNull_ShouldDoNothing() {
         // When & Then - should not throw exception
         assertDoesNotThrow(() -> familyMapper.updateEntityFromDTO(null, null));
     }
 
     @Test
-    @DisplayName("updateEntityFromDTO should update with null values when FamilyDTO has null fields")
+    @DisplayName("updateEntityFromDTO debería actualizar con valores null cuando FamilyDTO tiene campos null")
     void testUpdateEntityFromDTO_WithDTOWithNullValues_ShouldUpdateWithNullValues() {
         // Given
         Family existingFamily = new Family();
@@ -318,7 +318,7 @@ class FamilyMapperTest {
     }
 
     @Test
-    @DisplayName("Complete workflow: toEntity and toDTO should maintain data integrity")
+    @DisplayName("Flujo completo: toEntity y toDTO deberían mantener la integridad de los datos")
     void testCompleteWorkflow_ToEntityAndToDTO_ShouldMaintainDataIntegrity() {
         // Given
         FamilyDTO originalDTO = new FamilyDTO();

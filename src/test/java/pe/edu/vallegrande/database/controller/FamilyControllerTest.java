@@ -30,7 +30,7 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(FamilyController.class)
 @Import(TestSecurityConfig.class)
-@DisplayName("FamilyController - Pruebas de Integración")
+@DisplayName("FamilyController - Pruebas de Integración Completas")
 class FamilyControllerTest {
 
     @Autowired
@@ -48,7 +48,7 @@ class FamilyControllerTest {
         testFamilyList = createTestFamilyList();
     }
 
-    // ========== TESTS PARA GET /api/v1/families/active (Sin autenticación requerida) ==========
+    // ========== TESTS PARA GET /api/v1/families/active ==========
 
     @Test
     @DisplayName("GET /active - Debe retornar todas las familias activas")
@@ -85,7 +85,21 @@ class FamilyControllerTest {
                 .hasSize(0);
     }
 
-    // ========== TESTS PARA GET /api/v1/families/inactive (Con autenticación) ==========
+    @Test
+    @DisplayName("GET /active - Debe manejar errores del servicio")
+    void getAllActiveFamilies_WhenServiceError_ShouldReturnError() {
+        // Given
+        when(familyService.findAllActive()).thenReturn(Flux.error(new RuntimeException("Database error")));
+
+        // When & Then
+        webTestClient.get()
+                .uri("/api/v1/families/active")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
+    // ========== TESTS PARA GET /api/v1/families/inactive ==========
 
     @Test
     @DisplayName("GET /inactive - Debe retornar todas las familias inactivas")
@@ -97,7 +111,7 @@ class FamilyControllerTest {
 
         // When & Then
         webTestClient
-                .mutateWith(mockJwt()) // Agregar JWT mock
+                .mutateWith(mockJwt())
                 .get()
                 .uri("/api/v1/families/inactive")
                 .accept(MediaType.APPLICATION_JSON)
@@ -109,7 +123,26 @@ class FamilyControllerTest {
                 .contains(inactiveFamily);
     }
 
-    // ========== TESTS PARA GET /api/v1/families/detail/{id} (Con autenticación) ==========
+    @Test
+    @DisplayName("GET /inactive - Debe retornar lista vacía cuando no hay familias inactivas")
+    void getAllInactiveFamilies_WhenNoInactiveFamilies_ShouldReturnEmptyList() {
+        // Given
+        when(familyService.findAllInactive()).thenReturn(Flux.empty());
+
+        // When & Then
+        webTestClient
+                .mutateWith(mockJwt())
+                .get()
+                .uri("/api/v1/families/inactive")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBodyList(FamilyDTO.class)
+                .hasSize(0);
+    }
+
+    // ========== TESTS PARA GET /api/v1/families/detail/{id} ==========
 
     @Test
     @DisplayName("GET /detail/{id} - Debe retornar detalles de familia existente")
@@ -146,7 +179,7 @@ class FamilyControllerTest {
                 .expectStatus().isNotFound();
     }
 
-    // ========== TESTS PARA GET /api/v1/families/{id} (Sin autenticación requerida) ==========
+    // ========== TESTS PARA GET /api/v1/families/{id} ==========
 
     @Test
     @DisplayName("GET /{id} - Debe retornar familia existente")
@@ -179,7 +212,7 @@ class FamilyControllerTest {
                 .expectStatus().isNotFound();
     }
 
-    // ========== TESTS PARA POST /api/v1/families (Con autenticación) ==========
+    // ========== TESTS PARA POST /api/v1/families ==========
 
     @Test
     @DisplayName("POST / - Debe crear familia exitosamente")
@@ -228,7 +261,7 @@ class FamilyControllerTest {
                 .expectStatus().isBadRequest();
     }
 
-    // ========== TESTS PARA PUT /api/v1/families/{id} (Con autenticación) ==========
+    // ========== TESTS PARA PUT /api/v1/families/{id} ==========
 
     @Test
     @DisplayName("PUT /{id} - Debe actualizar familia existente")
@@ -254,7 +287,44 @@ class FamilyControllerTest {
                 .isEqualTo(updatedDTO);
     }
 
-    // ========== TESTS PARA PUT /api/v1/families/delete/{id} (Con autenticación) ==========
+    @Test
+    @DisplayName("PUT /{id} - Debe retornar 404 para familia inexistente")
+    void updateFamily_NonExistingFamily_ShouldReturn404() {
+        // Given
+        when(familyService.updateFamily(eq(999), any(FamilyDTO.class))).thenReturn(Mono.empty());
+
+        // When & Then
+        webTestClient
+                .mutateWith(mockJwt())
+                .put()
+                .uri("/api/v1/families/999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(testFamilyDTO)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("PUT /{id} - Debe manejar errores de actualización")
+    void updateFamily_ServiceError_ShouldReturnInternalServerError() {
+        // Given
+        when(familyService.updateFamily(eq(1), any(FamilyDTO.class)))
+                .thenReturn(Mono.error(new RuntimeException("Update error")));
+
+        // When & Then
+        webTestClient
+                .mutateWith(mockJwt())
+                .put()
+                .uri("/api/v1/families/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(testFamilyDTO)
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
+    // ========== TESTS PARA PUT /api/v1/families/delete/{id} ==========
 
     @Test
     @DisplayName("PUT /delete/{id} - Debe eliminar familia exitosamente")
@@ -291,7 +361,26 @@ class FamilyControllerTest {
                 .isEqualTo("Family not found");
     }
 
-    // ========== TESTS PARA PUT /api/v1/families/active/{id} (Con autenticación) ==========
+    @Test
+    @DisplayName("PUT /delete/{id} - Debe manejar errores generales")
+    void deleteFamily_ServiceError_ShouldReturnInternalServerError() {
+        // Given
+        when(familyService.deleteFamily(1))
+                .thenReturn(Mono.error(new RuntimeException("Database error")));
+
+        // When & Then
+        webTestClient
+                .mutateWith(mockJwt())
+                .put()
+                .uri("/api/v1/families/delete/1")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(String.class)
+                .isEqualTo("Ha ocurrido un error");
+    }
+
+    // ========== TESTS PARA PUT /api/v1/families/active/{id} ==========
 
     @Test
     @DisplayName("PUT /active/{id} - Debe activar familia exitosamente")
@@ -326,6 +415,25 @@ class FamilyControllerTest {
                 .expectStatus().isNotFound()
                 .expectBody(String.class)
                 .isEqualTo("Family not found");
+    }
+
+    @Test
+    @DisplayName("PUT /active/{id} - Debe manejar errores generales")
+    void activeFamily_ServiceError_ShouldReturnInternalServerError() {
+        // Given
+        when(familyService.activeFamily(1))
+                .thenReturn(Mono.error(new RuntimeException("Database error")));
+
+        // When & Then
+        webTestClient
+                .mutateWith(mockJwt())
+                .put()
+                .uri("/api/v1/families/active/1")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(String.class)
+                .isEqualTo("Ha ocurrido un error");
     }
 
     // ========== MÉTODOS AUXILIARES ==========

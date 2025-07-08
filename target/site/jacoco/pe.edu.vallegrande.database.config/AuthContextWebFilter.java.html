@@ -10,12 +10,12 @@ import org.springframework.web.server.WebFilter;
     @Bean
     public WebFilter jwtTokenPropagationFilter() {
 <span class="fc" id="L12">        return (exchange, chain) -&gt; {</span>
-<span class="nc" id="L13">            String authHeader = exchange.getRequest().getHeaders().getFirst(&quot;Authorization&quot;);</span>
-<span class="nc bnc" id="L14" title="All 4 branches missed.">            if (authHeader != null &amp;&amp; authHeader.startsWith(&quot;Bearer &quot;)) {</span>
-<span class="nc" id="L15">                String token = authHeader.substring(7); // Remover &quot;Bearer &quot;</span>
-<span class="nc" id="L16">                return chain.filter(exchange).contextWrite(ctx -&gt; ctx.put(&quot;Authorization&quot;, token));</span>
+<span class="fc" id="L13">            String authHeader = exchange.getRequest().getHeaders().getFirst(&quot;Authorization&quot;);</span>
+<span class="fc bfc" id="L14" title="All 4 branches covered.">            if (authHeader != null &amp;&amp; authHeader.startsWith(&quot;Bearer &quot;)) {</span>
+<span class="fc" id="L15">                String token = authHeader.substring(7); // Remover &quot;Bearer &quot;</span>
+<span class="fc" id="L16">                return chain.filter(exchange).contextWrite(ctx -&gt; ctx.put(&quot;Authorization&quot;, token));</span>
             }
-<span class="nc" id="L18">            return chain.filter(exchange);</span>
+<span class="fc" id="L18">            return chain.filter(exchange);</span>
         };
     }
 }

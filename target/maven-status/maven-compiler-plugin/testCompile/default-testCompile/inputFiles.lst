@@ -1,4 +1,5 @@
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/DatabaseApplicationTests.java
+/workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/AuthContextWebFilterTest.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/JwtConverterConfigTest.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/config/SecurityConfigTest.java
 /workspaces/vg-ms-project/src/test/java/pe/edu/vallegrande/database/controller/AdmissionReasonControllerTest.java

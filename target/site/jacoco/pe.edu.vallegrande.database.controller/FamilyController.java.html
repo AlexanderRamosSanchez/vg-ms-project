@@ -107,17 +107,17 @@ public class FamilyController {
     }
 
     private Mono&lt;ResponseEntity&lt;FamilyDTO&gt;&gt; handleUpdateError(Throwable e) {
-<span class="nc" id="L110">        logger.error(&quot;Error updating family&quot;, e);</span>
-<span class="nc" id="L111">        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());</span>
+<span class="fc" id="L110">        logger.error(&quot;Error updating family&quot;, e);</span>
+<span class="fc" id="L111">        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());</span>
     }
 
     private Mono&lt;ResponseEntity&lt;Object&gt;&gt; handleStatusChangeError(Throwable e) {
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (e instanceof IllegalArgumentException) {</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if (e instanceof IllegalArgumentException) {</span>
 <span class="fc" id="L116">            logger.warn(&quot;Family not found: {}&quot;, e.getMessage());</span>
 <span class="fc" id="L117">            return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()));</span>
         }
-<span class="nc" id="L119">        logger.error(&quot;Error changing family status&quot;, e);</span>
-<span class="nc" id="L120">        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Ha ocurrido un error&quot;));</span>
+<span class="fc" id="L119">        logger.error(&quot;Error changing family status&quot;, e);</span>
+<span class="fc" id="L120">        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Ha ocurrido un error&quot;));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

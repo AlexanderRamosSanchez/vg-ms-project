@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import pe.edu.vallegrande.database.dto.AdmissionReasonDTO;
 import pe.edu.vallegrande.database.dto.BasicServiceDTO;
 import pe.edu.vallegrande.database.dto.FamilyDTO;
 import pe.edu.vallegrande.database.dto.HousingDetailsDTO;
@@ -25,7 +26,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("FamilyService - Pruebas Unitarias")
+@DisplayName("FamilyService - Pruebas Unitarias Completas")
 class FamilyServiceTest {
 
     @Mock
@@ -40,6 +41,9 @@ class FamilyServiceTest {
     @Mock
     private HousingServiceClient housingServiceClient;
 
+    @Mock
+    private AdmissionReasonService admissionReasonService;
+
     @InjectMocks
     private FamilyService familyService;
 
@@ -50,28 +54,27 @@ class FamilyServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Configuración de datos de prueba reutilizables
         testFamily = createTestFamily();
         testFamilyDTO = createTestFamilyDTO();
         testBasicService = createTestBasicService();
         testHousingDetails = createTestHousingDetails();
     }
 
-    /**
-     * Prueba el mapeo exitoso de Family a FamilyDTO con servicios básicos y detalles de vivienda
-     * Verifica que se obtengan correctamente los datos del microservicio externo
-     */
+    // ======================== PRUEBAS DE mapToFamilyDTO ========================
+
     @Test
-    @DisplayName("Debe mapear Family a FamilyDTO con servicios básicos y detalles de vivienda")
+    @DisplayName("Debe mapear Family a FamilyDTO con todos los servicios")
     void mapToFamilyDTO_WithAllServices_ShouldReturnCompleteFamilyDTO() {
-        // Given - Configuración de mocks para simular respuestas exitosas del cliente externo
+        // Given
         when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(testFamily.getReasibAdmission()))
+                .thenReturn(Mono.just("Razón de admisión"));
         when(housingServiceClient.getBasicServiceById(testFamily.getServiceId()))
                 .thenReturn(Mono.just(testBasicService));
         when(housingServiceClient.getHousingDetailsById(testFamily.getHousingId()))
                 .thenReturn(Mono.just(testHousingDetails));
 
-        // When & Then - Verificación del comportamiento reactivo
+        // When & Then
         StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
                 .expectNextMatches(dto -> 
                     dto.getBasicService() != null && 
@@ -79,23 +82,23 @@ class FamilyServiceTest {
                     dto.getId().equals(testFamily.getId())
                 )
                 .verifyComplete();
+
+        verify(admissionReasonService).getReasonTextById(testFamily.getReasibAdmission());
+        verify(housingServiceClient).getBasicServiceById(testFamily.getServiceId());
+        verify(housingServiceClient).getHousingDetailsById(testFamily.getHousingId());
     }
 
-    /**
-     * Prueba el mapeo cuando no hay servicios asociados
-     * Verifica que el DTO se cree correctamente sin servicios externos
-     */
     @Test
     @DisplayName("Debe mapear Family a FamilyDTO sin servicios cuando no existen IDs")
     void mapToFamilyDTO_WithoutServices_ShouldReturnBasicFamilyDTO() {
-        // Given - Familia sin IDs de servicios
+        // Given
         testFamily.setServiceId(null);
         testFamily.setHousingId(null);
+        testFamily.setReasibAdmission(null);
         
         when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
-        // No configuramos mocks para housingServiceClient porque no deben ser llamados
 
-        // When & Then - Verificación que no se llamen los servicios externos
+        // When & Then
         StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
                 .expectNextMatches(dto -> 
                     dto.getBasicService() == null && 
@@ -103,33 +106,47 @@ class FamilyServiceTest {
                 )
                 .verifyComplete();
 
+        verify(admissionReasonService, never()).getReasonTextById(any());
         verify(housingServiceClient, never()).getBasicServiceById(any());
         verify(housingServiceClient, never()).getHousingDetailsById(any());
     }
 
-    /**
-     * Prueba la obtención de familias activas ordenadas por ID
-     * Verifica que solo se obtengan familias con status "A" y estén ordenadas
-     */
+    @Test
+    @DisplayName("Debe manejar errores en servicios externos y continuar")
+    void mapToFamilyDTO_WithServiceErrors_ShouldHandleGracefully() {
+        // Given
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(testFamily.getReasibAdmission()))
+                .thenReturn(Mono.error(new RuntimeException("Service error")));
+        when(housingServiceClient.getBasicServiceById(testFamily.getServiceId()))
+                .thenReturn(Mono.error(new RuntimeException("Service error")));
+        when(housingServiceClient.getHousingDetailsById(testFamily.getHousingId()))
+                .thenReturn(Mono.error(new RuntimeException("Service error")));
+
+        // When & Then
+        StepVerifier.create(familyService.mapToFamilyDTO(testFamily))
+                .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
+                .verifyComplete();
+    }
+
+    // ======================== PRUEBAS DE CONSULTA ========================
+
     @Test
     @DisplayName("Debe obtener todas las familias activas ordenadas por ID")
     void findAllActive_ShouldReturnActiveFamiliesOrderedById() {
-        // Given - Lista de familias activas desordenadas
+        // Given
         Family family1 = createTestFamily();
         family1.setId(2);
-        family1.setServiceId(null); // Sin servicios para evitar llamadas al cliente
-        family1.setHousingId(null);
-        
         Family family2 = createTestFamily();
         family2.setId(1);
-        family2.setServiceId(null); // Sin servicios para evitar llamadas al cliente
-        family2.setHousingId(null);
         
-        when(familyRepository.findAllByStatus("A"))
-                .thenReturn(Flux.just(family1, family2));
+        when(familyRepository.findAllByStatus("A")).thenReturn(Flux.just(family1, family2));
         when(familyMapper.toDTO(any(Family.class))).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
 
-        // When & Then - Verificación del orden y filtrado
+        // When & Then
         StepVerifier.create(familyService.findAllActive())
                 .expectNextCount(2)
                 .verifyComplete();
@@ -137,22 +154,17 @@ class FamilyServiceTest {
         verify(familyRepository).findAllByStatus("A");
     }
 
-    /**
-     * Prueba la obtención de familias inactivas
-     * Verifica que solo se obtengan familias con status "I"
-     */
     @Test
     @DisplayName("Debe obtener todas las familias inactivas")
     void findAllInactive_ShouldReturnInactiveFamilies() {
-        // Given - Configuración de repository mock
-        testFamily.setServiceId(null); // Sin servicios para evitar llamadas al cliente
-        testFamily.setHousingId(null);
-        
-        when(familyRepository.findAllByStatus("I"))
-                .thenReturn(Flux.just(testFamily));
+        // Given
+        when(familyRepository.findAllByStatus("I")).thenReturn(Flux.just(testFamily));
         when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
 
-        // When & Then - Verificación de filtrado por status inactivo
+        // When & Then
         StepVerifier.create(familyService.findAllInactive())
                 .expectNext(testFamilyDTO)
                 .verifyComplete();
@@ -160,21 +172,17 @@ class FamilyServiceTest {
         verify(familyRepository).findAllByStatus("I");
     }
 
-    /**
-     * Prueba la búsqueda exitosa de familia por ID
-     * Verifica que se obtenga correctamente una familia específica
-     */
     @Test
     @DisplayName("Debe encontrar familia por ID exitosamente")
     void findById_ExistingFamily_ShouldReturnFamilyDTO() {
-        // Given - Familia existente en el repository sin servicios externos
-        testFamily.setServiceId(null);
-        testFamily.setHousingId(null);
-        
+        // Given
         when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
         when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
 
-        // When & Then - Verificación de búsqueda exitosa
+        // When & Then
         StepVerifier.create(familyService.findById(1))
                 .expectNext(testFamilyDTO)
                 .verifyComplete();
@@ -182,99 +190,148 @@ class FamilyServiceTest {
         verify(familyRepository).findById(1);
     }
 
-    /**
-     * Prueba la búsqueda de familia inexistente
-     * Verifica que se complete vacío cuando no existe la familia
-     */
     @Test
     @DisplayName("Debe completar vacío cuando la familia no existe")
     void findById_NonExistingFamily_ShouldCompleteEmpty() {
-        // Given - Repository que retorna vacío
+        // Given
         when(familyRepository.findById(999)).thenReturn(Mono.empty());
 
-        // When & Then - Verificación de resultado vacío
+        // When & Then
         StepVerifier.create(familyService.findById(999))
                 .verifyComplete();
 
         verify(familyRepository).findById(999);
     }
 
-    /**
-     * Prueba la eliminación lógica exitosa de familia
-     * Verifica que se cambie el status a "I" correctamente
-     */
+    // ======================== PRUEBAS DE CREACIÓN ========================
+
     @Test
-    @DisplayName("Debe eliminar familia lógicamente (cambiar status a I)")
+    @DisplayName("Debe crear familia exitosamente con servicios")
+    void createFamily_WithServices_ShouldCreateSuccessfully() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setBasicService(testBasicService);
+        testFamilyDTO.setHousingDetails(testHousingDetails);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(housingServiceClient.createBasicService(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.createHousingDetails(any())).thenReturn(Mono.just(testHousingDetails));
+        when(familyMapper.toEntity(testFamilyDTO)).thenReturn(testFamily);
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.just(testFamily));
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.createFamily(testFamilyDTO))
+                .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
+                .verifyComplete();
+
+        verify(familyEventService).publishFamilyEvent(any(Family.class), eq("CREATED"));
+    }
+
+    @Test
+    @DisplayName("Debe fallar al crear familia con razón de admisión inválida")
+    void createFamily_WithInvalidAdmissionReason_ShouldFail() {
+        // Given
+        testFamilyDTO.setReasibAdmission(999);
+        when(admissionReasonService.findById(999)).thenReturn(Mono.empty());
+
+        // When & Then
+        StepVerifier.create(familyService.createFamily(testFamilyDTO))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+    }
+
+    // ======================== PRUEBAS DE ACTUALIZACIÓN ========================
+
+    @Test
+    @DisplayName("Debe actualizar familia exitosamente")
+    void updateFamily_ExistingFamily_ShouldUpdateSuccessfully() {
+        // Given
+        testFamilyDTO.setReasibAdmission(1);
+        testFamilyDTO.setBasicService(testBasicService);
+        testFamilyDTO.setHousingDetails(testHousingDetails);
+        
+        when(admissionReasonService.findById(1)).thenReturn(Mono.just(createAdmissionReason()));
+        when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
+        when(housingServiceClient.updateBasicService(any(), any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.updateHousingDetails(any(), any())).thenReturn(Mono.just(testHousingDetails));
+        when(familyRepository.save(any(Family.class))).thenReturn(Mono.just(testFamily));
+        when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
+
+        // When & Then
+        StepVerifier.create(familyService.updateFamily(1, testFamilyDTO))
+                .expectNextMatches(dto -> dto.getId().equals(testFamily.getId()))
+                .verifyComplete();
+
+        verify(familyEventService).publishFamilyEvent(any(Family.class), eq("UPDATED"));
+    }
+
+    // ======================== PRUEBAS DE ELIMINACIÓN Y ACTIVACIÓN ========================
+
+    @Test
+    @DisplayName("Debe eliminar familia lógicamente")
     void deleteFamily_ExistingFamily_ShouldSetStatusToInactive() {
-        // Given - Familia existente
+        // Given
         when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
         when(familyRepository.save(any(Family.class))).thenReturn(Mono.just(testFamily));
 
-        // When & Then - Verificación de eliminación lógica
+        // When & Then
         StepVerifier.create(familyService.deleteFamily(1))
                 .verifyComplete();
 
-        // Verificación que se publique evento de eliminación
         verify(familyEventService).publishFamilyEvent(any(Family.class), eq("DELETED"));
     }
 
-    /**
-     * Prueba la activación exitosa de familia
-     * Verifica que se cambie el status a "A" correctamente
-     */
     @Test
-    @DisplayName("Debe activar familia exitosamente (cambiar status a A)")
+    @DisplayName("Debe activar familia exitosamente")
     void activeFamily_ExistingFamily_ShouldSetStatusToActive() {
-        // Given - Familia existente inactiva
+        // Given
         testFamily.setStatus("I");
         when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
         when(familyRepository.save(any(Family.class))).thenReturn(Mono.just(testFamily));
 
-        // When & Then - Verificación de activación exitosa
+        // When & Then
         StepVerifier.create(familyService.activeFamily(1))
                 .verifyComplete();
 
-        // Verificación que se publique evento de actualización
         verify(familyEventService).publishFamilyEvent(any(Family.class), eq("UPDATED"));
     }
 
-    /**
-     * Prueba el cambio de status en familia inexistente
-     * Verifica que se lance excepción apropiada
-     */
     @Test
     @DisplayName("Debe lanzar excepción al cambiar status de familia inexistente")
     void changeStatus_NonExistingFamily_ShouldThrowException() {
-        // Given - Familia inexistente
+        // Given
         when(familyRepository.findById(999)).thenReturn(Mono.empty());
 
-        // When & Then - Verificación de excepción
+        // When & Then
         StepVerifier.create(familyService.deleteFamily(999))
                 .expectError(IllegalArgumentException.class)
                 .verify();
     }
 
-    /**
-     * Prueba la obtención de detalles de familia
-     * Verifica que sea idéntico a findById
-     */
     @Test
-    @DisplayName("Debe obtener detalles de familia (idéntico a findById)")
-    void findDetailById_ShouldReturnSameAsFindById() {
-        // Given - Configuración idéntica a findById
-        testFamily.setServiceId(null);
-        testFamily.setHousingId(null);
-        
+    @DisplayName("Debe obtener detalles de familia")
+    void findDetailById_ShouldReturnFamilyDetails() {
+        // Given
         when(familyRepository.findById(1)).thenReturn(Mono.just(testFamily));
         when(familyMapper.toDTO(testFamily)).thenReturn(testFamilyDTO);
+        when(admissionReasonService.getReasonTextById(any())).thenReturn(Mono.just("Razón"));
+        when(housingServiceClient.getBasicServiceById(any())).thenReturn(Mono.just(testBasicService));
+        when(housingServiceClient.getHousingDetailsById(any())).thenReturn(Mono.just(testHousingDetails));
 
-        // When & Then - Verificación de comportamiento idéntico
+        // When & Then
         StepVerifier.create(familyService.findDetailById(1))
                 .expectNext(testFamilyDTO)
                 .verifyComplete();
     }
 
-    // Métodos auxiliares para crear objetos de prueba
+    // ======================== MÉTODOS AUXILIARES ========================
 
     private Family createTestFamily() {
         Family family = new Family();
@@ -286,6 +343,7 @@ class FamilyServiceTest {
         family.setStatus("A");
         family.setServiceId(100);
         family.setHousingId(200);
+        family.setReasibAdmission(1);
         family.setCreated(LocalDateTime.now());
         return family;
     }
@@ -298,6 +356,7 @@ class FamilyServiceTest {
         dto.setNumberMembers(4);
         dto.setNumberChildren(2);
         dto.setStatus("A");
+        dto.setReasibAdmission(1);
         dto.setCreated(LocalDateTime.now());
         return dto;
     }
@@ -318,5 +377,12 @@ class FamilyServiceTest {
                 .housingMaterial("Material Noble")
                 .bedroomNumber(3)
                 .build();
+    }
+
+    private AdmissionReasonDTO createAdmissionReason() {
+        AdmissionReasonDTO dto = new AdmissionReasonDTO();
+        dto.setId(1);
+        dto.setReason("Razón de admisión de prueba");
+        return dto;
     }
 }

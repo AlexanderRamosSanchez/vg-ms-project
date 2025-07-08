@@ -1,9 +1,9 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-database,pe.edu.vallegrande.database.service,FamilyService,348,183,35,5,80,47,36,19,18,17
+database,pe.edu.vallegrande.database.service,FamilyService,60,471,19,21,13,114,18,37,3,32
 database,pe.edu.vallegrande.database.service,FamilyMapper,0,165,0,8,0,46,0,8,0,4
 database,pe.edu.vallegrande.database.service,AdmissionReasonService,0,58,0,0,0,17,0,6,0,6
 database,pe.edu.vallegrande.database.config,SecurityConfig,21,114,0,0,6,18,1,6,1,6
 database,pe.edu.vallegrande.database.config,JwtConverterConfig,0,34,0,4,0,9,0,5,0,3
-database,pe.edu.vallegrande.database.config,AuthContextWebFilter,32,5,4,0,5,2,4,2,2,2
-database,pe.edu.vallegrande.database.controller,FamilyController,19,115,1,1,4,30,2,13,1,13
+database,pe.edu.vallegrande.database.config,AuthContextWebFilter,0,37,0,4,0,7,0,6,0,4
+database,pe.edu.vallegrande.database.controller,FamilyController,0,134,0,2,0,34,0,15,0,14
 database,pe.edu.vallegrande.database.controller,AdmissionReasonController,0,15,0,0,0,5,0,3,0,3

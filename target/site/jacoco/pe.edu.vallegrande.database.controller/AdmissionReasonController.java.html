@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdmissionReasonController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">database</a> &gt; <a href="index.source.html" class="el_package">pe.edu.vallegrande.database.controller</a> &gt; <span class="el_source">AdmissionReasonController.java</span></div><h1>AdmissionReasonController.java</h1><pre class="source lang-java linenums">package pe.edu.vallegrande.database.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import pe.edu.vallegrande.database.dto.AdmissionReasonDTO;
+import pe.edu.vallegrande.database.service.AdmissionReasonService;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@RestController
+@RequestMapping(&quot;/api/v1/admission-reasons&quot;)
+public class AdmissionReasonController {
+
+    private final AdmissionReasonService admissionReasonService;
+
+<span class="fc" id="L17">    public AdmissionReasonController(AdmissionReasonService admissionReasonService) {</span>
+<span class="fc" id="L18">        this.admissionReasonService = admissionReasonService;</span>
+<span class="fc" id="L19">    }</span>
+
+    /**
+     * Obtiene todas las razones de admisión disponibles
+     */
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux&lt;AdmissionReasonDTO&gt; getAllAdmissionReasons() {
+<span class="nc" id="L26">        return admissionReasonService.findAll();</span>
+    }
+
+    /**
+     * Crea una nueva razón de admisión
+     */
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono&lt;AdmissionReasonDTO&gt; createAdmissionReason(@RequestBody AdmissionReasonDTO admissionReasonDTO) {
+<span class="nc" id="L35">        return admissionReasonService.create(admissionReasonDTO);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

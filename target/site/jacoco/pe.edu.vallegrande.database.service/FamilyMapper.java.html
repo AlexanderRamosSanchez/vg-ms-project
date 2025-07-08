@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FamilyMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">database</a> &gt; <a href="index.source.html" class="el_package">pe.edu.vallegrande.database.service</a> &gt; <span class="el_source">FamilyMapper.java</span></div><h1>FamilyMapper.java</h1><pre class="source lang-java linenums">package pe.edu.vallegrande.database.service;
+
+import org.springframework.stereotype.Component;
+import pe.edu.vallegrande.database.dto.FamilyDTO;
+import pe.edu.vallegrande.database.model.Family;
+
+@Component
+<span class="fc" id="L8">public class FamilyMapper {</span>
+
+    /**
+     * Convierte una entidad Family a un DTO
+     */
+    public FamilyDTO toDTO(Family family) {
+<span class="nc bnc" id="L14" title="All 2 branches missed.">        if (family == null) {</span>
+<span class="nc" id="L15">            return null;</span>
+        }
+        
+<span class="nc" id="L18">        FamilyDTO dto = new FamilyDTO();</span>
+<span class="nc" id="L19">        dto.setId(family.getId());</span>
+<span class="nc" id="L20">        dto.setLastName(family.getLastName());</span>
+<span class="nc" id="L21">        dto.setDirection(family.getDirection());</span>
+<span class="nc" id="L22">        dto.setReasibAdmission(family.getReasibAdmission());</span>
+<span class="nc" id="L23">        dto.setNumberMembers(family.getNumberMembers());</span>
+<span class="nc" id="L24">        dto.setNumberChildren(family.getNumberChildren());</span>
+<span class="nc" id="L25">        dto.setFamilyType(family.getFamilyType());</span>
+<span class="nc" id="L26">        dto.setSocialProblems(family.getSocialProblems());</span>
+<span class="nc" id="L27">        dto.setWeeklyFrequency(family.getWeeklyFrequency());</span>
+<span class="nc" id="L28">        dto.setFeedingType(family.getFeedingType());</span>
+<span class="nc" id="L29">        dto.setSafeType(family.getSafeType());</span>
+<span class="nc" id="L30">        dto.setFamilyDisease(family.getFamilyDisease());</span>
+<span class="nc" id="L31">        dto.setTreatment(family.getTreatment());</span>
+<span class="nc" id="L32">        dto.setDiseaseHistory(family.getDiseaseHistory());</span>
+<span class="nc" id="L33">        dto.setMedicalExam(family.getMedicalExam());</span>
+<span class="nc" id="L34">        dto.setStatus(family.getStatus());</span>
+<span class="nc" id="L35">        dto.setCreated(family.getCreated());</span>
+<span class="nc" id="L36">        dto.setDeleted(family.getDeleted());</span>
+<span class="nc" id="L37">        return dto;</span>
+    }
+
+    /**
+     * Convierte un DTO a una entidad Family
+     */
+    public Family toEntity(FamilyDTO dto) {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (dto == null) {</span>
+<span class="nc" id="L45">            return null;</span>
+        }
+        
+<span class="nc" id="L48">        Family family = new Family();</span>
+<span class="nc" id="L49">        updateEntityFromDTO(family, dto);</span>
+<span class="nc" id="L50">        return family;</span>
+    }
+
+    /**
+     * Actualiza una entidad existente con datos del DTO
+     */
+    public void updateEntityFromDTO(Family family, FamilyDTO dto) {
+<span class="nc bnc" id="L57" title="All 4 branches missed.">        if (family == null || dto == null) {</span>
+<span class="nc" id="L58">            return;</span>
+        }
+        
+<span class="nc" id="L61">        family.setLastName(dto.getLastName());</span>
+<span class="nc" id="L62">        family.setDirection(dto.getDirection());</span>
+<span class="nc" id="L63">        family.setReasibAdmission(dto.getReasibAdmission());</span>
+<span class="nc" id="L64">        family.setNumberMembers(dto.getNumberMembers());</span>
+<span class="nc" id="L65">        family.setNumberChildren(dto.getNumberChildren());</span>
+<span class="nc" id="L66">        family.setFamilyType(dto.getFamilyType());</span>
+<span class="nc" id="L67">        family.setSocialProblems(dto.getSocialProblems());</span>
+<span class="nc" id="L68">        family.setWeeklyFrequency(dto.getWeeklyFrequency());</span>
+<span class="nc" id="L69">        family.setFeedingType(dto.getFeedingType());</span>
+<span class="nc" id="L70">        family.setSafeType(dto.getSafeType());</span>
+<span class="nc" id="L71">        family.setFamilyDisease(dto.getFamilyDisease());</span>
+<span class="nc" id="L72">        family.setTreatment(dto.getTreatment());</span>
+<span class="nc" id="L73">        family.setDiseaseHistory(dto.getDiseaseHistory());</span>
+<span class="nc" id="L74">        family.setMedicalExam(dto.getMedicalExam());</span>
+<span class="nc" id="L75">        family.setStatus(dto.getStatus());</span>
+        // We don't update created and deleted timestamps here
+<span class="nc" id="L77">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FamilyController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">database</a> &gt; <a href="index.source.html" class="el_package">pe.edu.vallegrande.database.controller</a> &gt; <span class="el_source">FamilyController.java</span></div><h1>FamilyController.java</h1><pre class="source lang-java linenums">package pe.edu.vallegrande.database.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pe.edu.vallegrande.database.dto.FamilyDTO;
+import pe.edu.vallegrande.database.service.FamilyService;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@RestController
+@RequestMapping(&quot;/api/v1/families&quot;)
+public class FamilyController {
+
+<span class="fc" id="L18">    private static final Logger logger = LoggerFactory.getLogger(FamilyController.class);</span>
+    private final FamilyService familyService;
+
+<span class="fc" id="L21">    public FamilyController(FamilyService familyService) {</span>
+<span class="fc" id="L22">        this.familyService = familyService;</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * Obtiene todas las familias activas
+     */
+    @GetMapping(value = &quot;/active&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux&lt;FamilyDTO&gt; getAllActiveFamilies() {
+<span class="fc" id="L30">        return familyService.findAllActive();</span>
+    }
+
+    /**
+     * Obtiene todas las familias inactivas
+     */
+    @GetMapping(value = &quot;/inactive&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux&lt;FamilyDTO&gt; getAllInactiveFamilies() {
+<span class="fc" id="L38">        return familyService.findAllInactive();</span>
+    }
+
+    /**
+     * Obtiene detalles de una familia por ID
+     */
+    @GetMapping(value = &quot;/detail/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono&lt;ResponseEntity&lt;FamilyDTO&gt;&gt; getFamilyDetailById(@PathVariable Integer id) {
+<span class="fc" id="L46">        return familyService.findDetailById(id)</span>
+<span class="fc" id="L47">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L48">                .defaultIfEmpty(ResponseEntity.notFound().build());</span>
+    }
+
+    /**
+     * Obtiene una familia por ID
+     */
+    @GetMapping(value = &quot;/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono&lt;ResponseEntity&lt;FamilyDTO&gt;&gt; getFamilyById(@PathVariable Integer id) {
+<span class="fc" id="L56">        return familyService.findById(id)</span>
+<span class="fc" id="L57">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L58">                .defaultIfEmpty(ResponseEntity.notFound().build());</span>
+    }
+
+    /**
+     * Crea una nueva familia
+     */
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Mono&lt;ResponseEntity&lt;FamilyDTO&gt;&gt; createFamily(@RequestBody FamilyDTO familyDTO) {
+<span class="fc" id="L66">        return familyService.createFamily(familyDTO)</span>
+<span class="fc" id="L67">                .map(savedFamilyDTO -&gt; ResponseEntity.status(HttpStatus.CREATED).body(savedFamilyDTO))</span>
+<span class="fc" id="L68">                .onErrorResume(this::handleCreationError);</span>
+    }
+
+    /**
+     * Actualiza una familia existente
+     */
+    @PutMapping(value = &quot;/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Mono&lt;ResponseEntity&lt;FamilyDTO&gt;&gt; updateFamily(@PathVariable Integer id, @RequestBody FamilyDTO familyDTO) {
+<span class="fc" id="L76">        return familyService.updateFamily(id, familyDTO)</span>
+<span class="fc" id="L77">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L78">                .defaultIfEmpty(ResponseEntity.notFound().build())</span>
+<span class="fc" id="L79">                .onErrorResume(this::handleUpdateError);</span>
+    }
+
+    /**
+     * Elimina lógicamente una familia (cambia status a inactivo)
+     */
+    @PutMapping(value = &quot;/delete/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono&lt;ResponseEntity&lt;Object&gt;&gt; deleteFamily(@PathVariable Integer id) {
+<span class="fc" id="L87">        return familyService.deleteFamily(id)</span>
+<span class="fc" id="L88">                .then(Mono.just(ResponseEntity.noContent().build()))</span>
+<span class="fc" id="L89">                .onErrorResume(this::handleStatusChangeError);</span>
+    }
+
+    /**
+     * Activa lógicamente una familia (cambia status a activo)
+     */
+    @PutMapping(value = &quot;/active/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono&lt;ResponseEntity&lt;Object&gt;&gt; activeFamily(@PathVariable Integer id) {
+<span class="fc" id="L97">        return familyService.activeFamily(id)</span>
+<span class="fc" id="L98">                .then(Mono.just(ResponseEntity.noContent().build()))</span>
+<span class="fc" id="L99">                .onErrorResume(this::handleStatusChangeError);</span>
+    }
+
+    // Métodos privados para manejo de errores
+
+    private Mono&lt;ResponseEntity&lt;FamilyDTO&gt;&gt; handleCreationError(Throwable e) {
+<span class="fc" id="L105">        logger.error(&quot;Error creating family&quot;, e);</span>
+<span class="fc" id="L106">        return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());</span>
+    }
+
+    private Mono&lt;ResponseEntity&lt;FamilyDTO&gt;&gt; handleUpdateError(Throwable e) {
+<span class="nc" id="L110">        logger.error(&quot;Error updating family&quot;, e);</span>
+<span class="nc" id="L111">        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());</span>
+    }
+
+    private Mono&lt;ResponseEntity&lt;Object&gt;&gt; handleStatusChangeError(Throwable e) {
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (e instanceof IllegalArgumentException) {</span>
+<span class="fc" id="L116">            logger.warn(&quot;Family not found: {}&quot;, e.getMessage());</span>
+<span class="fc" id="L117">            return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()));</span>
+        }
+<span class="nc" id="L119">        logger.error(&quot;Error changing family status&quot;, e);</span>
+<span class="nc" id="L120">        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Ha ocurrido un error&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

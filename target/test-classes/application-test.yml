@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: vg-ms-family
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb
+    username: sa
+    password: 
+  sql:
+    init:
+      mode: always
+      timeout: 10s
+
+server:
+  port: 0  # Puerto aleatorio para tests
+
+logging:
+  level:
+    io.r2dbc: DEBUG
+    org.springframework.r2dbc: DEBUG
+
+housing:
+  service:
+    url: http://localhost:8080

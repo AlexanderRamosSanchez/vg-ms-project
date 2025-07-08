@@ -1,1 +1,4 @@
-pe\edu\vallegrande\database\DatabaseApplicationTests.class
+pe/edu/vallegrande/database/controller/FamilyControllerTest.class
+pe/edu/vallegrande/database/DatabaseApplicationTests.class
+pe/edu/vallegrande/database/service/FamilyServiceTest.class
+pe/edu/vallegrande/database/security/TestSecurityConfig.class

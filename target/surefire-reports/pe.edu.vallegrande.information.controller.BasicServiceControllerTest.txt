@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: pe.edu.vallegrande.information.controller.BasicServiceControllerTest
 -------------------------------------------------------------------------------
-Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.036 s -- in pe.edu.vallegrande.information.controller.BasicServiceControllerTest
+Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.955 s -- in pe.edu.vallegrande.information.controller.BasicServiceControllerTest
